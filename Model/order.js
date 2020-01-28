@@ -13,6 +13,10 @@ const orderschema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    locations: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Location'
+    }],
     status: {
         type: Boolean,
         default: false
