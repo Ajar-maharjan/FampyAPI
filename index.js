@@ -3,7 +3,15 @@ const dotenv = require('dotenv');
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require('body-parser');
+const userRouter = require('./Routes/user');
+const foodRouter = require('./Routes/food');
+const orderRouter = require('./Routes/order');
+const uploadRouter = require('./Routes/upload');
+const locationRouter = require('./Routes/location');
+const feedbackRouter = require('./Routes/feedback');
 
+
+// const auth = require('./auth');
 
 dotenv.config();
 const app = express();
@@ -24,6 +32,13 @@ mongoose.connect(process.env.URL, {
         console.log("Successfully connected to MongodB server");
     }, (err) => console.log(err));
 
+app.use('/upload', uploadRouter);
+app.use('/', foodRouter);
+app.use('/', userRouter);
+app.use('/', orderRouter);
+app.use('/', locationRouter);
+app.use('/', feedbackRouter);
+// app.use(auth.verifyUser);
 
 
 app.use((err, req, res, next) => {
