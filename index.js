@@ -31,15 +31,14 @@ mongoose.connect(process.env.URL, {
         console.log("Successfully connected to MongodB server");
     }, (err) => console.log(err));
 
-app.use('/', foodRouter);
-app.use('/', feedbackRouter);
-app.use('/', restaurantRouter);
-app.use('/upload', uploadRouter);
 app.use('/', userRouter);
+app.use('/upload', uploadRouter);
+app.use('/', foodRouter);
+app.use('/', restaurantRouter);
+app.use('/', feedbackRouter);
 app.use(auth.verifyUser);
 app.use('/', orderRouter);
 app.use('/', locationRouter);
-
 
 
 app.use((err, req, res, next) => {
