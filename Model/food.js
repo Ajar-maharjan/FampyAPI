@@ -5,9 +5,9 @@ const foodSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    categories: [{
+    restaurants: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Category'
+        ref: 'Restaurant'
     }],
     foodPrice: {
         type: Number,
