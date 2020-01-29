@@ -1,5 +1,6 @@
 const cors = require('cors');
 const dotenv = require('dotenv');
+const morgan = require("morgan");
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require('body-parser');
@@ -15,6 +16,7 @@ const auth = require('./auth');
 dotenv.config();
 const app = express();
 app.use(express.json());
+app.use(morgan("tiny"));
 app.options('*', cors());
 app.use(bodyParser.urlencoded({
     extended: true

@@ -5,7 +5,7 @@ const orderschema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     }],
-    foods:[{
+    foods: [{
         foodId: Number,
         quantity: Number,
         name: String,

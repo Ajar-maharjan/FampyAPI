@@ -6,6 +6,8 @@ const feedbackSchema = new mongoose.Schema({
         required: true
     },
     feedbackmsg: String
+}, {
+    timestamps: true
 });
 
 module.exports = mongoose.model('Feedback', feedbackSchema);
