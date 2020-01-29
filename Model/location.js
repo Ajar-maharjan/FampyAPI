@@ -3,15 +3,15 @@ const mongoose = require('mongoose');
 const locationSchema = new mongoose.Schema({
     name: {
         type: String,
-        required: true
+        required: [true,"Location name is required"]
     },
     latitude: {
         type: String,
-        required: true
+        required: [true,"Latitude is required"]
     },
     longitude: {
         type: String,
-        required: true
+        required: [true,"Longitude is required"]
     },
     additionalInfo: {
         type: String

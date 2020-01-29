@@ -10,9 +10,7 @@ const uploadRouter = require('./Routes/upload');
 const locationRouter = require('./Routes/location');
 const feedbackRouter = require('./Routes/feedback');
 const restaurantRouter = require('./Routes/restaurant');
-
-
-// const auth = require('./auth');
+const auth = require('./auth');
 
 dotenv.config();
 const app = express();
@@ -33,13 +31,15 @@ mongoose.connect(process.env.URL, {
         console.log("Successfully connected to MongodB server");
     }, (err) => console.log(err));
 
-app.use('/upload', uploadRouter);
 app.use('/', foodRouter);
+app.use('/', feedbackRouter);
+app.use('/', restaurantRouter);
+app.use('/upload', uploadRouter);
 app.use('/', userRouter);
+app.use(auth.verifyUser);
 app.use('/', orderRouter);
 app.use('/', locationRouter);
-app.use('/', feedbackRouter);
-// app.use(auth.verifyUser);
+
 
 
 app.use((err, req, res, next) => {
