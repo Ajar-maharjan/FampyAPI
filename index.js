@@ -9,6 +9,7 @@ const orderRouter = require('./Routes/order');
 const uploadRouter = require('./Routes/upload');
 const locationRouter = require('./Routes/location');
 const feedbackRouter = require('./Routes/feedback');
+const restaurantRouter = require('./Routes/restaurant');
 
 
 // const auth = require('./auth');
