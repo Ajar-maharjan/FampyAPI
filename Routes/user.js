@@ -15,13 +15,7 @@ router.post('/signup', (req, res, next) => {
             err.status = 500;
             return next(err);
         }
-        User.create({
-            email: req.body.email,
-            name: req.body.name,
-            phoneNumber: req.body.phoneNumber,
-            password: hash,
-            image: req.body.image
-        }).then((user) => {
+        User.create(req.body).then((user) => {
             let token = jwt.sign({
                 _id: user._id
             }, "this is secret key");
