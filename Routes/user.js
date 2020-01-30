@@ -18,15 +18,15 @@ router.post('/signup', (req, res, next) => {
         let newUser = new User(req.body);
         newUser.password = hash;
         newUser.save()
-        .then((user) => {
-            let token = jwt.sign({
-                _id: user._id
-            }, "this is secret key");
-            res.json({
-                status: "Signup success!",
-                token: token
-            });
-        }).catch(next);
+            .then((user) => {
+                let token = jwt.sign({
+                    _id: user._id
+                }, "this is secret key");
+                res.json({
+                    status: "Signup success!",
+                    token: token
+                });
+            }).catch(next);
     });
 });
 
@@ -60,14 +60,26 @@ router.post('/login', (req, res, next) => {
         }).catch(next);
 })
 
-router.get('/me',auth.verifyUser,(req,res,next)=>{
-    res.json({
-        _id:req.user._id,
-        email:req.user.email,
-        image:req.user.image,
-        name: req.user.name,
-        phoneNumber: req.user.phoneNumber
-    });
-});
+router.route('/me')
+    .get(auth.verifyUser, (req, res, next) => {
+        res.json({
+            _id: req.user._id,
+            email: req.user.email,
+            image: req.user.image,
+            name: req.user.name,
+            phoneNumber: req.user.phoneNumber
+        })
+    })
+    .put(auth.verifyUser, (req, res, next) => {
+        User.findByIdAndUpdate(
+                req.params.id, {
+                    $set: req.body
+                })
+            .then((user) => {
+                if (user == null) throw new Error("User not found!");
+                res.json(user);
+            }).catch(next);
+    })
+
 
 module.exports = router;

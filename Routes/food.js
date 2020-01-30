@@ -14,8 +14,8 @@ router.route('/food')
     })
     .post((req, res, next) => {
         let newFood = new Food(req.body);
-        newFood.restaurants = hash;
-        newUser.save()
+        newFood.restaurants = "5e3243c83365751131d48c81";
+        newFood.save()
             .then((food) => {
                 res.statusCode = 201;
                 res.json(food);
@@ -34,7 +34,7 @@ router.route('/food')
             message: "Method not allowed"
         });
     })
-router.route('/restaurant/:id')
+router.route('/food/:id')
     .put(auth.verifyUser,auth.verifyAdmin,(req, res, next) => {
         Food.findByIdAndUpdate(
                 req.params.id, {
@@ -56,5 +56,13 @@ router.route('/restaurant/:id')
     })
     .get()
     .post();
+
+router.get('/food/restaurant/:id',(req, res, next) => {
+        Food.find({restaurants:req.params.id})
+            .then((food) => {
+                res.json(food);
+            })
+            .catch(next);
+    })
 
 module.exports = router;
