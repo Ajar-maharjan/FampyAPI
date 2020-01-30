@@ -12,9 +12,8 @@ router.route('/food')
             })
             .catch(next);
     })
-    .post((req, res, next) => {
+    .post(auth.verifyUser,auth.verifyAdmin,(req, res, next) => {
         let newFood = new Food(req.body);
-        newFood.restaurants = "5e3243c83365751131d48c81";
         newFood.save()
             .then((food) => {
                 res.statusCode = 201;
@@ -35,7 +34,7 @@ router.route('/food')
         });
     })
 router.route('/food/:id')
-    .put(auth.verifyUser,auth.verifyAdmin,(req, res, next) => {
+    .put(auth.verifyUser, auth.verifyAdmin, (req, res, next) => {
         Food.findByIdAndUpdate(
                 req.params.id, {
                     $set: req.body
@@ -45,7 +44,7 @@ router.route('/food/:id')
                 res.json(food);
             }).catch(next);
     })
-    .delete(auth.verifyUser,auth.verifyAdmin,(req, res, next) => {
+    .delete(auth.verifyUser, auth.verifyAdmin, (req, res, next) => {
         Food.findOneAndDelete({
                 _id: req.params.id
             })
@@ -54,15 +53,23 @@ router.route('/food/:id')
                 res.json(food);
             }).catch(next);
     })
-    .get()
-    .post();
-
-router.get('/food/restaurant/:id',(req, res, next) => {
-        Food.find({restaurants:req.params.id})
+    .get((req, res, next) => {
+        Food.findOne({_id:req.params.id})
             .then((food) => {
                 res.json(food);
             })
-            .catch(next);
+            .catch(next)
     })
+    .post();
+
+router.get('/restaurant/food/:id', (req, res, next) => {
+    Food.find({
+            restaurants: req.params.id
+        })
+        .then((food) => {
+            res.json(food);
+        })
+        .catch(next);
+});
 
 module.exports = router;

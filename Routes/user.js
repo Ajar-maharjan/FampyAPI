@@ -70,16 +70,19 @@ router.route('/me')
             phoneNumber: req.user.phoneNumber
         })
     })
-    .put(auth.verifyUser, (req, res, next) => {
-        User.findByIdAndUpdate(
-                req.params.id, {
-                    $set: req.body
-                })
-            .then((user) => {
-                if (user == null) throw new Error("User not found!");
-                res.json(user);
-            }).catch(next);
-    })
+    .put(auth.verifyUser,(req,res,next)=>{
+        User.findByIdAndUpdate({_id:req.user._id},req.body)
+        .then(()=>{
+            User.findOne({_id:req.user._id})
+            .then((user)=>{
+                res.json(user)
+            })
+        })
+        .catch(next)
+    });
+
+router.put('/user/change',auth.verifyUser,(req,res,next)=>
+{})
 
 
 module.exports = router;
