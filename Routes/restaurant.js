@@ -20,24 +20,39 @@ router.route('/restaurant')
             })
             .catch(next);
     })
-router.put('/restaurant/:id', (req, res, next) => {
-    Restarant.findByIdAndUpdate(
-            req.params.id, {
-                $set: req.body
+    .put((req, res) => {
+        res.statusCode = 405;
+        res.json({
+            message: "Method not allowed"
+        });
+    })
+    .delete((req, res) => {
+        res.statusCode = 405;
+        res.json({
+            message: "Method not allowed"
+        });
+    })
+router.route('/restaurant/:id')
+    .put(auth.verifyUser,auth.verifyAdmin,(req, res, next) => {
+        Restarant.findByIdAndUpdate(
+                req.params.id, {
+                    $set: req.body
+                })
+            .then((restaurant) => {
+                if (restaurant == null) throw new Error("Restaurant not found!");
+                res.json(restaurant);
+            }).catch(next);
+    })
+    .delete(auth.verifyUser,auth.verifyAdmin,(req, res, next) => {
+        Restarant.findOneAndDelete({
+                _id: req.params.id
             })
-        .then((restaurant) => {
-            if (restaurant == null) throw new Error("Restaurant not found!");
-            res.json(restaurant);
-        }).catch(next);
-})
-router.delete('/restaurant/:id', auth.verifyAdmin, (req, res, next) => {
-    Restarant.findOneAndDelete({
-            _id: req.params.id
-        })
-        .then((restaurant) => {
-            if (restaurant == null) throw new Error("Restaurant not found!");
-            res.json(restaurant);
-        }).catch(next);
-});
+            .then((restaurant) => {
+                if (restaurant == null) throw new Error("Restaurant not found!");
+                res.json(restaurant);
+            }).catch(next);
+    })
+    .get()
+    .post();
 
 module.exports = router;
