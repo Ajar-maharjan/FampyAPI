@@ -15,13 +15,10 @@ router.post('/signup', (req, res, next) => {
             err.status = 500;
             return next(err);
         }
-        User.create({
-            email: req.body.email,
-            name: req.body.name,
-            phoneNumber: req.body.phoneNumber,
-            password: hash,
-            image: req.body.image
-        }).then((user) => {
+        let newUser = new User(req.body);
+        newUser.password = hash;
+        newUser.save()
+        .then((user) => {
             let token = jwt.sign({
                 _id: user._id
             }, "this is secret key");
@@ -39,14 +36,14 @@ router.post('/login', (req, res, next) => {
         })
         .then((user) => {
             if (user == null) {
-                let err = new Error("User not found!");
+                let err = new Error("Incorrect username or password");
                 err.status = 401;
                 return next(err);
             } else {
                 bcrypt.compare(req.body.password, user.password)
                     .then((isMatch) => {
                         if (!isMatch) {
-                            let err = new Error('Incorrect password');
+                            let err = new Error('Incorrect username or password');
                             err.status = 401;
                             return next(err);
                         }
@@ -65,7 +62,7 @@ router.post('/login', (req, res, next) => {
 
 router.get('/me',auth.verifyUser,(req,res,next)=>{
     res.json({
-        _id:req._id,
+        _id:req.user._id,
         email:req.user.email,
         image:req.user.image,
         name: req.user.name,

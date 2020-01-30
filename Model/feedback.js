@@ -6,6 +6,8 @@ const feedbackSchema = new mongoose.Schema({
         required: [true,"Email address is required"]
     },
     feedbackmsg: String
+}, {
+    timestamps: true
 });
 
 module.exports = mongoose.model('Feedback', feedbackSchema);
