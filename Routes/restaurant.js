@@ -12,7 +12,7 @@ router.route('/restaurant')
             })
             .catch(next);
     })
-    .post((req, res, next) => {
+    .post(auth.verifyUser,auth.verifyAdmin,(req, res, next) => {
         Restarant.create(req.body)
             .then((restaurant) => {
                 res.statusCode = 201;

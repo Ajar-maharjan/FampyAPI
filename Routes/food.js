@@ -12,10 +12,9 @@ router.route('/food')
             })
             .catch(next);
     })
-    .post((req, res, next) => {
+    .post(auth.verifyUser,auth.verifyAdmin,(req, res, next) => {
         let newFood = new Food(req.body);
-        newFood.restaurants = hash;
-        newUser.save()
+        newFood.save()
             .then((food) => {
                 res.statusCode = 201;
                 res.json(food);
@@ -34,8 +33,8 @@ router.route('/food')
             message: "Method not allowed"
         });
     })
-router.route('/restaurant/:id')
-    .put(auth.verifyUser,auth.verifyAdmin,(req, res, next) => {
+router.route('/food/:id')
+    .put(auth.verifyUser, auth.verifyAdmin, (req, res, next) => {
         Food.findByIdAndUpdate(
                 req.params.id, {
                     $set: req.body
@@ -45,7 +44,7 @@ router.route('/restaurant/:id')
                 res.json(food);
             }).catch(next);
     })
-    .delete(auth.verifyUser,auth.verifyAdmin,(req, res, next) => {
+    .delete(auth.verifyUser, auth.verifyAdmin, (req, res, next) => {
         Food.findOneAndDelete({
                 _id: req.params.id
             })
@@ -54,7 +53,23 @@ router.route('/restaurant/:id')
                 res.json(food);
             }).catch(next);
     })
-    .get()
+    .get((req, res, next) => {
+        Food.findOne({_id:req.params.id})
+            .then((food) => {
+                res.json(food);
+            })
+            .catch(next)
+    })
     .post();
+
+router.get('/restaurant/food/:id', (req, res, next) => {
+    Food.find({
+            restaurants: req.params.id
+        })
+        .then((food) => {
+            res.json(food);
+        })
+        .catch(next);
+});
 
 module.exports = router;

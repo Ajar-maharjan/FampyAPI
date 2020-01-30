@@ -18,15 +18,15 @@ router.post('/signup', (req, res, next) => {
         let newUser = new User(req.body);
         newUser.password = hash;
         newUser.save()
-        .then((user) => {
-            let token = jwt.sign({
-                _id: user._id
-            }, "this is secret key");
-            res.json({
-                status: "Signup success!",
-                token: token
-            });
-        }).catch(next);
+            .then((user) => {
+                let token = jwt.sign({
+                    _id: user._id
+                }, "this is secret key");
+                res.json({
+                    status: "Signup success!",
+                    token: token
+                });
+            }).catch(next);
     });
 });
 
@@ -60,14 +60,29 @@ router.post('/login', (req, res, next) => {
         }).catch(next);
 })
 
-router.get('/me',auth.verifyUser,(req,res,next)=>{
-    res.json({
-        _id:req.user._id,
-        email:req.user.email,
-        image:req.user.image,
-        name: req.user.name,
-        phoneNumber: req.user.phoneNumber
+router.route('/me')
+    .get(auth.verifyUser, (req, res, next) => {
+        res.json({
+            _id: req.user._id,
+            email: req.user.email,
+            image: req.user.image,
+            name: req.user.name,
+            phoneNumber: req.user.phoneNumber
+        })
+    })
+    .put(auth.verifyUser,(req,res,next)=>{
+        User.findByIdAndUpdate({_id:req.user._id},req.body)
+        .then(()=>{
+            User.findOne({_id:req.user._id})
+            .then((user)=>{
+                res.json(user)
+            })
+        })
+        .catch(next)
     });
-});
+
+router.put('/user/change',auth.verifyUser,(req,res,next)=>
+{})
+
 
 module.exports = router;
