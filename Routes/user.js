@@ -70,19 +70,74 @@ router.route('/me')
             phoneNumber: req.user.phoneNumber
         })
     })
-    .put(auth.verifyUser,(req,res,next)=>{
-        User.findByIdAndUpdate({_id:req.user._id},req.body)
-        .then(()=>{
-            User.findOne({_id:req.user._id})
-            .then((user)=>{
-                res.json(user)
+    .put(auth.verifyUser, (req, res, next) => {
+        User.findByIdAndUpdate({
+                _id: req.user._id
+            }, req.body)
+            .then(() => {
+                User.findOne({
+                        _id: req.user._id
+                    })
+                    .then((user) => {
+                        res.json(user)
+                    })
             })
-        })
-        .catch(next)
+            .catch(next)
     });
 
-router.put('/user/change',auth.verifyUser,(req,res,next)=>
-{})
+
+router.route('/user/change')
+    .post(auth.verifyUser, (req, res, next) => {
+        User.findOne({
+                email: req.body.email
+            })
+            .then((user) => {
+                if (user == null) {
+                    let err = new Error("Incorrect username");
+                    err.status = 401;
+                    return next(err);
+                } else {
+                    bcrypt.compare(req.body.password, user.password)
+                        .then((isMatch) => {
+                            if (!isMatch) {
+                                let err = new Error('Incorrect password');
+                                err.status = 401;
+                                return next(err);
+                            }
+                            res.json({
+                                status: 'correct password',
+                            });
+                        }).catch(next);
+                }
+            })
+            .catch(next)
+
+    })
+    .put(auth.verifyUser, (req, res, next) => {
+        let password = req.body.password;
+        bcrypt.hash(password, 10, function (err, hash) {
+            if (err) {
+                let err = new Error('Could not hash!');
+                err.status = 500;
+                return next(err);
+            }
+            User.findByIdAndUpdate({
+                    _id: req.user._id
+                }, {
+                    password: hash
+                })
+                .then(() => {
+                    User.findOne({
+                            _id: req.user._id
+                        })
+                        .then((user) => {
+                            res.json(user)
+                        })
+                })
+                .catch(next)
+
+        });
+    });
 
 
 module.exports = router;
