@@ -4,6 +4,7 @@ const orderschema = new mongoose.Schema({
     users: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
+    },
     foods: [{
         foodId: {
             type: mongoose.Schema.Types.ObjectId,
