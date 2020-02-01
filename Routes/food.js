@@ -12,7 +12,7 @@ router.route('/food')
             })
             .catch(next);
     })
-    .post(auth.verifyUser,auth.verifyAdmin,(req, res, next) => {
+    .post(auth.verifyUser, auth.verifyAdmin, (req, res, next) => {
         let newFood = new Food(req.body);
         newFood.save()
             .then((food) => {
@@ -54,7 +54,9 @@ router.route('/food/:id')
             }).catch(next);
     })
     .get((req, res, next) => {
-        Food.findOne({_id:req.params.id})
+        Food.findOne({
+                _id: req.params.id
+            })
             .then((food) => {
                 res.json(food);
             })
@@ -72,4 +74,18 @@ router.get('/restaurant/food/:id', (req, res, next) => {
         .catch(next);
 });
 
+router.get('/searchfood/:search', (req, res, next) => {
+    let searchText = req.params.search;
+    Food.find({
+            $text: {
+                $search: searchText
+            }
+        })
+        .skip(20)
+        .limit(10)
+        .then((food) => {
+            res.json(food);
+        })
+        .catch(next);
+});
 module.exports = router;

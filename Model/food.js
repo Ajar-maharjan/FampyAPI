@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const foodSchema = new mongoose.Schema({
     foodName: {
         type: String,
+        index: true,
         required: [true,"Food name is required"]
     },
     restaurants: [{
