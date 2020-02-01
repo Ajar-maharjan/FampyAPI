@@ -3,7 +3,7 @@ const Order = require('../Model/order');
 const auth = require('../auth');
 
 const router = express.Router();
-    
+
 router.post("/order/:id", auth.verifyUser, async (req, res) => {
     const {
         foodId,

@@ -17,5 +17,7 @@ const foodSchema = new mongoose.Schema({
     description: String,
     image: String
 });
-foodSchema.index({ foodName: 'text' });
+foodSchema.index({
+    foodName: 'text'
+});
 module.exports = mongoose.model('Food', foodSchema);
