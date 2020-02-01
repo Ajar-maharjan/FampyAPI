@@ -82,7 +82,9 @@ router.route('/me')
                     })
             })
             .catch(next)
-    });
+    })
+    .post()
+    .delete();
 
 
 router.route('/user/change')
@@ -110,8 +112,8 @@ router.route('/user/change')
                 }
             })
             .catch(next)
-
     })
+
     .put(auth.verifyUser, (req, res, next) => {
         let password = req.body.password;
         bcrypt.hash(password, 10, function (err, hash) {
@@ -136,7 +138,8 @@ router.route('/user/change')
                 .catch(next)
 
         });
-    });
-
+    })
+    .get()
+    .delete();
 
 module.exports = router;

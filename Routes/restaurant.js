@@ -12,7 +12,6 @@ router.route('/restaurant')
             })
             .catch(next);
     })
-
     .post(auth.verifyUser, auth.verifyAdmin, (req, res, next) => {
         Restarant.create(req.body)
             .then((restaurant) => {
@@ -33,6 +32,7 @@ router.route('/restaurant')
             message: "Method not allowed"
         });
     })
+
 router.route('/restaurant/:id')
     .put(auth.verifyUser, auth.verifyAdmin, (req, res, next) => {
         Restarant.findByIdAndUpdate(

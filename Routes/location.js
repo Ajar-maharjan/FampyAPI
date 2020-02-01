@@ -24,6 +24,18 @@ router.route('/mylocation')
             })
             .catch(next);
     })
+    .delete((req, res) => {
+        res.statusCode = 405;
+        res.json({
+            message: "Method not allowed"
+        });
+    })
+    .put((req, res) => {
+        res.statusCode = 405;
+        res.json({
+            message: "Method not allowed"
+        });
+    })
 
 
 router.route('/mylocation/:id')
@@ -48,7 +60,6 @@ router.route('/mylocation/:id')
                 res.json(location);
             }).catch(next)
     })
-
     .delete(auth.verifyUser, (req, res, next) => {
         Location.findOneAndDelete({
                 users: req.users._id,
@@ -59,6 +70,7 @@ router.route('/mylocation/:id')
                 res.json(location);
             }).catch(next);
     })
+    .post();
 
 
 module.exports = router;

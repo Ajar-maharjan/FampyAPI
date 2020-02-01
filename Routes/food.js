@@ -34,6 +34,7 @@ router.route('/food')
             message: "Method not allowed"
         });
     })
+
 router.route('/food/:id')
     .put(auth.verifyUser, auth.verifyAdmin, (req, res, next) => {
         Food.findByIdAndUpdate(
