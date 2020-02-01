@@ -11,7 +11,7 @@ router.post("/order/:id", auth.verifyUser, async (req, res) => {
         name,
         price
     } = req.body;
-    
+
     const locationId = req.params.id;
     const userId = req.user._id;
 
