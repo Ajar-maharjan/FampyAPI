@@ -1,6 +1,7 @@
 const express = require('express');
 const Food = require('../Model/food');
 const auth = require('../auth');
+const cors = require('cors');
 
 const router = express.Router();
 
@@ -74,15 +75,13 @@ router.get('/restaurant/food/:id', (req, res, next) => {
         .catch(next);
 });
 
-router.get('/searchfood/:search', (req, res, next) => {
+router.get('/searchfood/:search', cors(), (req, res, next) => {
     let searchText = req.params.search;
     Food.find({
             $text: {
                 $search: searchText
             }
         })
-        .skip(20)
-        .limit(10)
         .then((food) => {
             res.json(food);
         })
