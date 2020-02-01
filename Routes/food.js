@@ -87,4 +87,5 @@ router.get('/searchfood/:search', cors(), (req, res, next) => {
         })
         .catch(next);
 });
+
 module.exports = router;

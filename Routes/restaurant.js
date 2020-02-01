@@ -12,6 +12,7 @@ router.route('/restaurant')
             })
             .catch(next);
     })
+
     .post(auth.verifyUser, auth.verifyAdmin, (req, res, next) => {
         Restarant.create(req.body)
             .then((restaurant) => {
@@ -43,6 +44,7 @@ router.route('/restaurant/:id')
                 res.json(restaurant);
             }).catch(next);
     })
+
     .delete(auth.verifyUser, auth.verifyAdmin, (req, res, next) => {
         Restarant.findOneAndDelete({
                 _id: req.params.id
