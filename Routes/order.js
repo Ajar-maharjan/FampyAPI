@@ -17,7 +17,7 @@ router.post("/order/:id", auth.verifyUser, async (req, res) => {
 
     try {
         let order = await Order.findOne({
-            userId
+            users: userId
         });
 
         if (order) {

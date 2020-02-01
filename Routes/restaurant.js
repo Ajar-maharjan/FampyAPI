@@ -12,7 +12,7 @@ router.route('/restaurant')
             })
             .catch(next);
     })
-    .post(auth.verifyUser,auth.verifyAdmin,(req, res, next) => {
+    .post(auth.verifyUser, auth.verifyAdmin, (req, res, next) => {
         Restarant.create(req.body)
             .then((restaurant) => {
                 res.statusCode = 201;
@@ -33,7 +33,7 @@ router.route('/restaurant')
         });
     })
 router.route('/restaurant/:id')
-    .put(auth.verifyUser,auth.verifyAdmin,(req, res, next) => {
+    .put(auth.verifyUser, auth.verifyAdmin, (req, res, next) => {
         Restarant.findByIdAndUpdate(
                 req.params.id, {
                     $set: req.body
@@ -43,7 +43,7 @@ router.route('/restaurant/:id')
                 res.json(restaurant);
             }).catch(next);
     })
-    .delete(auth.verifyUser,auth.verifyAdmin,(req, res, next) => {
+    .delete(auth.verifyUser, auth.verifyAdmin, (req, res, next) => {
         Restarant.findOneAndDelete({
                 _id: req.params.id
             })

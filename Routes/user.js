@@ -6,7 +6,6 @@ const auth = require('../auth');
 
 const router = express.Router();
 
-
 router.post('/signup', (req, res, next) => {
     let password = req.body.password;
     bcrypt.hash(password, 10, function (err, hash) {
