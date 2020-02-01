@@ -1,20 +1,21 @@
 const mongoose = require('mongoose');
 
 const orderschema = new mongoose.Schema({
-    users: [{
+    users: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
-    }],
     foods: [{
-        foodId: Number,
+        foodId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Food'
+        },
         quantity: Number,
-        name: String,
         price: Number
     }],
-    locations: [{
+    locations: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Location'
-    }],
+    },
     active: {
         type: Boolean,
         default: true

@@ -1,6 +1,7 @@
 const express = require('express');
 const Food = require('../Model/food');
 const auth = require('../auth');
+const cors = require('cors');
 
 const router = express.Router();
 
@@ -12,7 +13,7 @@ router.route('/food')
             })
             .catch(next);
     })
-    .post(auth.verifyUser,auth.verifyAdmin,(req, res, next) => {
+    .post(auth.verifyUser, auth.verifyAdmin, (req, res, next) => {
         let newFood = new Food(req.body);
         newFood.save()
             .then((food) => {
@@ -54,7 +55,9 @@ router.route('/food/:id')
             }).catch(next);
     })
     .get((req, res, next) => {
-        Food.findOne({_id:req.params.id})
+        Food.findOne({
+                _id: req.params.id
+            })
             .then((food) => {
                 res.json(food);
             })
@@ -65,6 +68,19 @@ router.route('/food/:id')
 router.get('/restaurant/food/:id', (req, res, next) => {
     Food.find({
             restaurants: req.params.id
+        })
+        .then((food) => {
+            res.json(food);
+        })
+        .catch(next);
+});
+
+router.get('/searchfood/:search', cors(), (req, res, next) => {
+    let searchText = req.params.search;
+    Food.find({
+            $text: {
+                $search: searchText
+            }
         })
         .then((food) => {
             res.json(food);

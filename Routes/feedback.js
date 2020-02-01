@@ -13,7 +13,7 @@ router.route('/feedback')
             })
             .catch(next);
     })
-    .get(auth.verifyUser,auth.verifyAdmin,(req, res, next) => {
+    .get(auth.verifyUser, auth.verifyAdmin, (req, res, next) => {
         Feedback.find({})
             .then((feedback) => {
                 res.json(feedback);
