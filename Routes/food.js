@@ -207,6 +207,8 @@ module.exports = router;
  *        properties:
  *          foodName:
  *            type: string
+ *          restaurants:
+ *            type: string
  *          foodPrice:
  *            type: number
  *          description:
@@ -260,7 +262,7 @@ module.exports = router;
  *     description: Internal server error
  */
 
-   /**
+/**
  * @swagger
  * /restaurant/food/{id}:
  *  get:
@@ -281,7 +283,7 @@ module.exports = router;
  *     description: Internal server error
  */
 
-  /**
+/**
  * @swagger
  * /searchfood/{search}:
  *  get:

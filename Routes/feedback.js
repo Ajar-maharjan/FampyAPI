@@ -26,7 +26,7 @@ router.route('/feedback')
 
 module.exports = router;
 
-  /**
+/**
  * @swagger
  * /feedback:
  *  post:
@@ -74,4 +74,3 @@ module.exports = router;
  *    403:
  *     description: Forbidden
  */
-
