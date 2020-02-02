@@ -24,13 +24,13 @@ router.route('/mylocation')
             })
             .catch(next);
     })
-    .delete((req, res) => {
+    .delete(auth.verifyUser, (req, res) => {
         res.statusCode = 405;
         res.json({
             message: "Method not allowed"
         });
     })
-    .put((req, res) => {
+    .put(auth.verifyUser, (req, res) => {
         res.statusCode = 405;
         res.json({
             message: "Method not allowed"
@@ -39,11 +39,12 @@ router.route('/mylocation')
 
 
 router.route('/mylocation/:id')
-    .get(auth.verifyUser, (req, res, next) => {
+    .get(auth.verifyUser, auth.verifyAdmin, (req, res, next) => {
         Location.findOne({
                 _id: req.params.id
             })
             .then((location) => {
+                res.status(200);
                 res.json(location);
             })
             .catch(next);
@@ -56,21 +57,194 @@ router.route('/mylocation/:id')
                 $set: req.body
             })
             .then((location) => {
-                if (location == null) throw new Error("Location not found!");
-                res.json(location);
+                if (location == null) throw new Error("Entry not found!");
+                Location.findOne({
+                        _id: req.params.id
+                    })
+                    .then((newLocation) => {
+                        res.status(200);
+                        res.json(newLocation);
+                    })
             }).catch(next)
     })
     .delete(auth.verifyUser, (req, res, next) => {
         Location.findOneAndDelete({
-                users: req.users._id,
-                _id: req.params.id
+                _id: req.params.id,
+                users: req.user._id
             })
             .then((location) => {
-                if (location == null) throw new Error("Location not found!");
-                res.json(location);
+                if (location == null) throw new Error("Unable to delete!");
+                res.status(200);
+                res.json('Location deleted successfully');
             }).catch(next);
     })
     .post();
 
 
 module.exports = router;
+
+
+/**
+ * @swagger
+ * /mylocation:
+ *  get:
+ *   tags:
+ *    - Retrieve user's location
+ *   description: Retrieve particular user's all location
+ *   produces:
+ *    - application/json
+ *   security:
+ *    - bearerAuth: []
+ *   responses:
+ *    200:
+ *     description: Retrieved successfully
+ *    401:
+ *     description: Bearer token error or unauthorized
+ *    500:
+ *     description: Internal server error/ token could not be verified
+ *  post:
+ *   tags:
+ *    - Create user's location
+ *   description: Create new user location
+ *   produces:
+ *    - application/json
+ *   consumes:
+ *    - application/json
+ *   security:
+ *    - bearerAuth: []
+ *   parameters:
+ *    - name: location
+ *      in: body
+ *      type: string
+ *      description: location details
+ *      schema:
+ *        type: object
+ *        required:
+ *          - name
+ *          - latitude
+ *          - longitude
+ *        properties:
+ *          name:
+ *            type: string
+ *          latitude:
+ *            type: string
+ *          longitude:
+ *            type: string
+ *          additionalInfo:
+ *            type: string
+ *          users:
+ *            type: string
+ *   responses:
+ *    201:
+ *     description: location created successfully
+ *    401:
+ *     description: Bearer token error or unauthorized
+ *    500:
+ *     description: Internal server error
+ *  delete:
+ *   produces:
+ *    - application/json
+ *   security:
+ *    - bearerAuth: []
+ *   responses:
+ *    405:
+ *     description: Method not allowed
+ *    500:
+ *     description: Internal server error
+ *  put:
+ *   produces:
+ *    - application/json
+ *   security:
+ *    - bearerAuth: []
+ *   responses:
+ *    405:
+ *     description: Method not allowed
+ *    500:
+ *     description: Internal server error
+ */
+
+/**
+ * @swagger
+ * /mylocation/{id}:
+ *  get:
+ *   tags:
+ *    - Retrieve particular location
+ *   description: Retrieve particular user's single location
+ *   produces:
+ *    - application/json
+ *   security:
+ *    - bearerAuth: []
+ *   parameters:
+ *    - name: id
+ *      in: path
+ *      required: true
+ *      description: Location Id
+ *   responses:
+ *    200:
+ *     description: Successful
+ *    401:
+ *     description: Bearer token error or unauthorized
+ *    500:
+ *     description: Internal server error/ token could not be verified
+ *    403:
+ *     description: Forbidden
+ *  delete:
+ *   tags:
+ *    - Delete user's location
+ *   description: Delete particular user's location
+ *   produces:
+ *    - application/json
+ *   security:
+ *    - bearerAuth: []
+ *   parameters:
+ *    - name: id
+ *      in: path
+ *      required: true
+ *      description: Location Id
+ *   responses:
+ *    200:
+ *     description: Successfully deleted
+ *    401:
+ *     description: Bearer token error or unauthorized
+ *    500:
+ *     description: Internal server error
+ *  put:
+ *   tags:
+ *    - Update user's location
+ *   description: Update particular user's location
+ *   produces:
+ *    - application/json
+ *   security:
+ *    - bearerAuth: []
+ *   parameters:
+ *    - name: id
+ *      in: path
+ *      required: true
+ *      description: Location Id
+ *    - name: location
+ *      in: body
+ *      type: string
+ *      description: location details
+ *      schema:
+ *        type: object
+ *        required:
+ *          - name
+ *          - latitude
+ *          - longitude
+ *        properties:
+ *          name:
+ *            type: string
+ *          latitude:
+ *            type: string
+ *          longitude:
+ *            type: string
+ *          additionalInfo:
+ *            type: string
+ *   responses:
+ *    200:
+ *     description: Successfully updated
+ *    401:
+ *     description: Bearer token error or unauthorized
+ *    500:
+ *     description: Internal server error
+ */
