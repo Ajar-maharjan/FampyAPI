@@ -20,7 +20,7 @@ router.post('/signup', (req, res, next) => {
             .then((user) => {
                 let token = jwt.sign({
                     _id: user._id
-                }, "this is secret key");
+                }, process.env.SECRET);
                 res.json({
                     status: "Signup success!",
                     token: token
@@ -49,6 +49,7 @@ router.post('/login', (req, res, next) => {
                         let token = jwt.sign({
                             _id: user._id
                         }, process.env.SECRET);
+                        res.status(201);
                         res.json({
                             status: 'Login success!',
                             token: token
@@ -72,13 +73,23 @@ router.route('/me')
     .put(auth.verifyUser, (req, res, next) => {
         User.findByIdAndUpdate({
                 _id: req.user._id
-            }, req.body)
+            }, {
+                $set: req.body
+            }, {
+                new: true
+            })
             .then(() => {
                 User.findOne({
                         _id: req.user._id
                     })
                     .then((user) => {
-                        res.json(user)
+                        res.json({
+                            _id: user._id,
+                            email: user.email,
+                            image: user.image,
+                            name: user.name,
+                            phoneNumber: user.phoneNumber
+                        })
                     })
             })
             .catch(next)
@@ -106,7 +117,7 @@ router.route('/user/change')
                                 return next(err);
                             }
                             res.json({
-                                status: 'correct password',
+                                status: 'Correct password!',
                             });
                         }).catch(next);
                 }
@@ -132,7 +143,13 @@ router.route('/user/change')
                             _id: req.user._id
                         })
                         .then((user) => {
-                            res.json(user)
+                            res.json({
+                                _id: user._id,
+                                email: user.email,
+                                image: user.image,
+                                name: user.name,
+                                phoneNumber: user.phoneNumber
+                            })
                         })
                 })
                 .catch(next)
@@ -143,3 +160,211 @@ router.route('/user/change')
     .delete();
 
 module.exports = router;
+
+/**
+ * @swagger
+ * /signup:
+ *  post:
+ *   tags:
+ *    - Create users
+ *   description: User registration
+ *   produces:
+ *    - application/json
+ *   consumes:
+ *    - application/json
+ *   parameters:
+ *    - name: user
+ *      in: body
+ *      type: string
+ *      description: The user to create
+ *      schema:
+ *        type: object
+ *        required:
+ *          - email
+ *          - name
+ *          - phoneNumber
+ *          - password
+ *        uniqueItems:
+ *          - email
+ *          - phoneNumber
+ *        properties:
+ *          email:
+ *            type: string
+ *          name:
+ *            type: string
+ *          phoneNumber:
+ *            type: string
+ *          password:
+ *            type: string
+ *          image:
+ *            type: string
+ *   responses:
+ *    201:
+ *     description: Signup success
+ *    500:
+ *     description: could not hash
+ */
+
+/**
+ * @swagger
+ * /login:
+ *  post:
+ *   tags:
+ *    - Login users
+ *   description: User login
+ *   produces:
+ *    - application/json
+ *   consumes:
+ *    - application/json
+ *   parameters:
+ *    - name: user
+ *      in: body
+ *      type: string
+ *      description: The user to create
+ *      schema:
+ *        type: object
+ *        required:
+ *          - email
+ *          - password
+ *        uniqueItems:
+ *          - email
+ *        properties:
+ *          email:
+ *            type: string
+ *          password:
+ *            type: string
+ *   responses:
+ *    200:
+ *     description: Login success!
+ *    401:
+ *     description: Incorrect username or password
+ */
+
+/**
+ * @swagger
+ * /me:
+ *  get:
+ *   tags:
+ *    - Get user details
+ *   description: Retrieve particular user details
+ *   produces:
+ *    - application/json
+ *   security:
+ *    - bearerAuth: []
+ *   responses:
+ *    200:
+ *     description: successful
+ *    401:
+ *     description: Bearer token error
+ *    500:
+ *     description: Token could not be verified
+ *  put:
+ *   tags:
+ *    - Update user details
+ *   description: Change user details
+ *   produces:
+ *    - application/json
+ *   consumes:
+ *    - application/json
+ *   security:
+ *    - bearerAuth: []
+ *   parameters:
+ *    - name: user
+ *      in: body
+ *      type: string
+ *      description: User details to be updated
+ *      schema:
+ *        type: object
+ *        required:
+ *          - email
+ *          - name
+ *          - phoneNumber
+ *          - password
+ *        uniqueItems:
+ *          - email
+ *          - phoneNumber
+ *        properties:
+ *          email:
+ *            type: string
+ *          name:
+ *            type: string
+ *          phoneNumber:
+ *            type: string
+ *          image:
+ *            type: string
+ *   responses:
+ *    200:
+ *     description: updated user
+ *    401:
+ *     description: Bearer token error
+ *    500:
+ *     description: Internal server error
+ */
+
+/**
+ * @swagger
+ * /user/change:
+ *  post:
+ *   tags:
+ *    - Check user password
+ *   description: check user current password
+ *   produces:
+ *    - application/json
+ *   consumes:
+ *    - application/json
+ *   security:
+ *    - bearerAuth: []
+ *   parameters:
+ *    - name: user
+ *      in: body
+ *      type: string
+ *      description: user email and password
+ *      schema:
+ *        type: object
+ *        required:
+ *          - email
+ *          - password
+ *        uniqueItems:
+ *          - email
+ *        properties:
+ *          email:
+ *            type: string
+ *          password:
+ *            type: string
+ *   responses:
+ *    200:
+ *     description: Correct password
+ *    401:
+ *     description: incorrect username or incorrect password or token error
+ *    500:
+ *     description: Token could not be verified
+ *  put:
+ *   tags:
+ *    - Update user password
+ *   description: Change user password
+ *   produces:
+ *    - application/json
+ *   consumes:
+ *    - application/json
+ *   security:
+ *    - bearerAuth: []
+ *   parameters:
+ *    - name: password
+ *      in: body
+ *      type: string
+ *      description: User new password
+ *      schema:
+ *        type: object
+ *        required:
+ *          - password
+ *        properties:
+ *          password:
+ *            type: string
+ *   responses:
+ *    200:
+ *     description: Password change successful
+ *    401:
+ *     description: Bearer token error
+ *    500:
+ *     description: Could not hash
+ */

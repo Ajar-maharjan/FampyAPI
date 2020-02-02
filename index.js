@@ -4,6 +4,8 @@ const morgan = require("morgan");
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require('body-parser');
+const swaggerJSDoc = require('swagger-jsdoc');
+const swaggerUI = require('swagger-ui-express');
 const userRouter = require('./Routes/user');
 const foodRouter = require('./Routes/food');
 const orderRouter = require('./Routes/order');
@@ -23,6 +25,36 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(express.static(__dirname + "/public"));
 
+let swaggerDefinition = {
+    info: {
+        title: 'Fampy API',
+        description: 'API for food order and delivery application',
+        version: '1.0.0',
+        contact: {
+            name: 'Ajar Maharjan'
+        },
+        servers: ['http://localhost:3000']
+    },
+    securityDefinitions: {
+        bearerAuth: {
+            type: 'apiKey',
+            name: 'authorization',
+            in: 'header',
+            scheme: 'bearer',
+        }
+    },
+    host: 'localhost:3000',
+    basePath: '/'
+};
+
+let swaggerOptions = {
+    swaggerDefinition,
+    apis: ['./Routes/*.js']
+};
+
+let swaggerSpecs = swaggerJSDoc(swaggerOptions);
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerSpecs));
+
 mongoose.connect(process.env.URL, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
@@ -34,7 +66,7 @@ mongoose.connect(process.env.URL, {
     }, (err) => console.log(err));
 
 app.use('/', userRouter);
-app.use('/upload', uploadRouter);
+app.use('/', uploadRouter);
 app.use('/', foodRouter);
 app.use('/', restaurantRouter);
 app.use('/', feedbackRouter);
@@ -54,3 +86,5 @@ app.use((err, req, res, next) => {
 app.listen(process.env.PORT, () => {
     console.log(`App is running at localhost:${process.env.PORT}`);
 });
+
+ 

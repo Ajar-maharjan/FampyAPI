@@ -8,7 +8,6 @@ router.post("/order/:id", auth.verifyUser, async (req, res) => {
     const {
         foodId,
         quantity,
-        name,
         price
     } = req.body;
 
@@ -58,3 +57,4 @@ router.post("/order/:id", auth.verifyUser, async (req, res) => {
 });
 
 module.exports = router;
+
