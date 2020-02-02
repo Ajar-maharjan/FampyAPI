@@ -50,6 +50,7 @@ router.route('/mylocation/:id')
             })
             .catch(next);
     })
+
     .put(auth.verifyUser, (req, res, next) => {
         Location.findOneAndUpdate({
                 _id: req.params.id,
@@ -68,6 +69,7 @@ router.route('/mylocation/:id')
                     })
             }).catch(next)
     })
+
     .delete(auth.verifyUser, (req, res, next) => {
         Location.findOneAndDelete({
                 _id: req.params.id,
@@ -79,6 +81,7 @@ router.route('/mylocation/:id')
                 res.json('Location deleted successfully');
             }).catch(next);
     })
+
     .post();
 
 
@@ -167,6 +170,7 @@ module.exports = router;
  *    500:
  *     description: Internal server error
  */
+
 
 /**
  * @swagger
