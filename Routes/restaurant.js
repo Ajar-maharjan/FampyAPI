@@ -8,6 +8,7 @@ router.route('/restaurant')
     .get((req, res, next) => {
         Restarant.find({})
             .then((restaurant) => {
+                res.status(201);
                 res.json(restaurant);
             })
             .catch(next);
@@ -41,7 +42,13 @@ router.route('/restaurant/:id')
                 })
             .then((restaurant) => {
                 if (restaurant == null) throw new Error("Restaurant not found!");
-                res.json(restaurant);
+                Restarant.find({
+                        _id: req.params.id
+                    })
+                    .then((newRestaurant) => {
+                        res.status(200);
+                        res.json(newRestaurant);
+                    })
             }).catch(next);
     })
 
@@ -51,7 +58,7 @@ router.route('/restaurant/:id')
             })
             .then((restaurant) => {
                 if (restaurant == null) throw new Error("Restaurant not found!");
-                res.json(restaurant);
+                res.json('Restaurant deleted succesfully');
             }).catch(next);
     })
     .get()
