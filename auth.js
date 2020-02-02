@@ -11,6 +11,7 @@ module.exports.verifyUser = (req, res, next) => {
     let data;
     try {
         data = jwt.verify(token, process.env.SECRET);
+        console.log(data);
     } catch (err) {
         throw new Error('Token could not be verified!');
     }
