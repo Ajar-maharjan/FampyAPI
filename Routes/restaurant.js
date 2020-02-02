@@ -5,18 +5,18 @@ const auth = require('../auth');
 const router = express.Router();
 
 router.route('/restaurant')
-    .get((req, res, next) => {
-        Restarant.find({})
-            .then((restaurant) => {
-                res.status(200);
-                res.json(restaurant);
-            })
-            .catch(next);
-    })
     .post(auth.verifyUser, auth.verifyAdmin, (req, res, next) => {
         Restarant.create(req.body)
             .then((restaurant) => {
                 res.statusCode = 201;
+                res.json(restaurant);
+            })
+            .catch(next);
+    })
+    .get((req, res, next) => {
+        Restarant.find({})
+            .then((restaurant) => {
+                res.status(200);
                 res.json(restaurant);
             })
             .catch(next);
