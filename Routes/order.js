@@ -91,7 +91,7 @@ module.exports = router;
  * /order:
  *  get:
  *   tags:
- *    - Get all order list
+ *    - Food order
  *   description: Retrieve all order of users by admin
  *   produces:
  *    - application/json
@@ -113,7 +113,7 @@ module.exports = router;
  * /order/{id}:
  *  post:
  *   tags:
- *    - Order food
+ *    - Food order
  *   description: Order food and add food to basket
  *   produces:
  *    - application/json
@@ -150,7 +150,7 @@ module.exports = router;
  *     description: Bearer token error or unauthorized
  *  put:
  *   tags:
- *    - Change status of order
+ *    - Food order
  *   description: Change status of the user order by admin
  *   produces:
  *    - application/json

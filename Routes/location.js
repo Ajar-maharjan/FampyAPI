@@ -10,6 +10,7 @@ router.route('/mylocation')
                 users: req.user._id
             })
             .then((location) => {
+                res.status(200);
                 res.json(location);
             })
             .catch(next);
@@ -89,7 +90,7 @@ module.exports = router;
  * /mylocation:
  *  get:
  *   tags:
- *    - Retrieve user's location
+ *    - Location
  *   description: Retrieve particular user's all location
  *   produces:
  *    - application/json
@@ -104,7 +105,7 @@ module.exports = router;
  *     description: Internal server error/ token could not be verified
  *  post:
  *   tags:
- *    - Create user's location
+ *    - Location
  *   description: Create new user location
  *   produces:
  *    - application/json
@@ -142,6 +143,8 @@ module.exports = router;
  *    500:
  *     description: Internal server error
  *  delete:
+ *   tags:
+ *    - Location
  *   produces:
  *    - application/json
  *   security:
@@ -152,6 +155,8 @@ module.exports = router;
  *    500:
  *     description: Internal server error
  *  put:
+ *   tags:
+ *    - Location
  *   produces:
  *    - application/json
  *   security:
@@ -168,7 +173,7 @@ module.exports = router;
  * /mylocation/{id}:
  *  get:
  *   tags:
- *    - Retrieve particular location
+ *    - Location
  *   description: Retrieve particular user's single location
  *   produces:
  *    - application/json
@@ -190,7 +195,7 @@ module.exports = router;
  *     description: Forbidden
  *  delete:
  *   tags:
- *    - Delete user's location
+ *    - Location
  *   description: Delete particular user's location
  *   produces:
  *    - application/json
@@ -210,7 +215,7 @@ module.exports = router;
  *     description: Internal server error
  *  put:
  *   tags:
- *    - Update user's location
+ *    - Location
  *   description: Update particular user's location
  *   produces:
  *    - application/json

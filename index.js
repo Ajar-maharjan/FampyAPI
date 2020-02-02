@@ -70,7 +70,7 @@ app.use('/', uploadRouter);
 app.use('/', foodRouter);
 app.use('/', restaurantRouter);
 app.use('/', feedbackRouter);
-app.use(auth.verifyUser);
+// app.use(auth.verifyUser);
 app.use('/', orderRouter);
 app.use('/', locationRouter);
 

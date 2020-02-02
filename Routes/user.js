@@ -166,7 +166,7 @@ module.exports = router;
  * /signup:
  *  post:
  *   tags:
- *    - Create users
+ *    - Users
  *   description: User registration
  *   produces:
  *    - application/json
@@ -210,7 +210,7 @@ module.exports = router;
  * /login:
  *  post:
  *   tags:
- *    - Login users
+ *    - Users
  *   description: User login
  *   produces:
  *    - application/json
@@ -245,7 +245,7 @@ module.exports = router;
  * /me:
  *  get:
  *   tags:
- *    - Get user details
+ *    - Users
  *   description: Retrieve particular user details
  *   produces:
  *    - application/json
@@ -260,7 +260,7 @@ module.exports = router;
  *     description: Token could not be verified
  *  put:
  *   tags:
- *    - Update user details
+ *    - Users
  *   description: Change user details
  *   produces:
  *    - application/json
@@ -306,7 +306,7 @@ module.exports = router;
  * /user/change:
  *  post:
  *   tags:
- *    - Check user password
+ *    - Users
  *   description: check user current password
  *   produces:
  *    - application/json
@@ -340,7 +340,7 @@ module.exports = router;
  *     description: Token could not be verified
  *  put:
  *   tags:
- *    - Update user password
+ *    - Users
  *   description: Change user password
  *   produces:
  *    - application/json

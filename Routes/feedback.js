@@ -58,7 +58,7 @@ module.exports = router;
  *     description: Internal server error
  *  get:
  *   tags:
- *    - Retrieve feedback
+ *    - Customer feedback
  *   description: Retrieve all feedbacks
  *   produces:
  *    - application/json
