@@ -1,8 +1,9 @@
 const cors = require('cors');
 const dotenv = require('dotenv');
-const morgan = require("morgan");
-const express = require("express");
-const mongoose = require("mongoose");
+const morgan = require('morgan');
+const express = require('express');
+const connection = require('./config/dbConnect');
+const swaggerOptions = require('./config/swaggerDef');
 const bodyParser = require('body-parser');
 const swaggerJSDoc = require('swagger-jsdoc');
 const swaggerUI = require('swagger-ui-express');
@@ -25,66 +26,30 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(express.static(__dirname + "/public"));
 
-let swaggerDefinition = {
-    info: {
-        title: 'Fampy API',
-        description: 'API for food order and delivery application',
-        version: '1.0.0',
-        contact: {
-            name: 'Ajar Maharjan'
-        },
-        servers: ['http://localhost:3000']
-    },
-    securityDefinitions: {
-        bearerAuth: {
-            type: 'apiKey',
-            name: 'authorization',
-            in: 'header',
-            scheme: 'bearer',
-        }
-    },
-    host: 'localhost:3000',
-    basePath: '/'
-};
-
-let swaggerOptions = {
-    swaggerDefinition,
-    apis: ['./Routes/*.js']
-};
 
 let swaggerSpecs = swaggerJSDoc(swaggerOptions);
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerSpecs));
-
-mongoose.connect(process.env.URL, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-        useFindAndModify: false,
-        useCreateIndex: true
-    })
-    .then((db) => {
-        console.log("Successfully connected to MongodB server");
-    }, (err) => console.log(err));
 
 app.use('/', userRouter);
 app.use('/', uploadRouter);
 app.use('/', foodRouter);
 app.use('/', restaurantRouter);
 app.use('/', feedbackRouter);
-// app.use(auth.verifyUser);
+app.use(auth.verifyUser);
 app.use('/', orderRouter);
 app.use('/', locationRouter);
 
 
-app.use((err, req, res, next) => {
+app.use((err, req, res) => {
     console.error(err.stack);
     res.status(500);
     res.json({
         status: err.message
     });
 });
-
-app.listen(process.env.PORT, () => {
-    console.log(`App is running at localhost:${process.env.PORT}`);
-});
-
- 
+connection.connect()
+    .then(() => {
+        app.listen(process.env.PORT, () => {
+            console.log(`App is running at localhost:${process.env.PORT}`);
+        });
+    })

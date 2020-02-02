@@ -77,7 +77,7 @@ router.route("/order/:id")
                             res.json({
                                 status: 'Order reactivated'
                             })
-                        };
+                        }
                     })
             })
             .catch(next)
