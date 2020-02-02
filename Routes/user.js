@@ -61,7 +61,7 @@ router.post('/login', (req, res, next) => {
 })
 
 router.route('/me')
-    .get(auth.verifyUser, (req, res, next) => {
+    .get(auth.verifyUser, (req, res) => {
         res.json({
             _id: req.user._id,
             email: req.user.email,
