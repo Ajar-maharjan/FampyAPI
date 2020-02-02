@@ -8,7 +8,7 @@ router.route('/restaurant')
     .get((req, res, next) => {
         Restarant.find({})
             .then((restaurant) => {
-                res.status(201);
+                res.status(200);
                 res.json(restaurant);
             })
             .catch(next);
@@ -65,3 +65,138 @@ router.route('/restaurant/:id')
     .post();
 
 module.exports = router;
+
+/**
+ * @swagger
+ * /restaurant:
+ *  get:
+ *   tags:
+ *    - Restaurant
+ *   description: Retrieve all available restaurant details
+ *   produces:
+ *    - application/json
+ *   responses:
+ *    200:
+ *     description: Successful
+ *    500:
+ *     description: Internal server error
+ *  post:
+ *   tags:
+ *    - Restaurant
+ *   description: Create new restaurant entry by admin
+ *   produces:
+ *    - application/json
+ *   consumes:
+ *    - application/json
+ *   security:
+ *    - bearerAuth: []
+ *   parameters:
+ *    - name: restaurant
+ *      in: body
+ *      type: string
+ *      description: restaurant details
+ *      schema:
+ *        type: object
+ *        required:
+ *          - name
+ *        properties:
+ *          name:
+ *            type: string
+ *          about:
+ *            type: string
+ *          location:
+ *            type: string
+ *          image:
+ *            type: string
+ *   responses:
+ *    201:
+ *     description: restaurant created successfully
+ *    401:
+ *     description: Bearer token error or unauthorized
+ *    500:
+ *     description: Internal server error/ token could not be verified
+ *    403:
+ *     description: Forbidden
+ *  delete:
+ *   tags:
+ *    - Restaurant
+ *   produces:
+ *    - application/json
+ *   responses:
+ *    405:
+ *     description: Method not allowed
+ *  put:
+ *   tags:
+ *    - Restaurant
+ *   produces:
+ *    - application/json
+ *   responses:
+ *    405:
+ *     description: Method not allowed
+ */
+
+/**
+ * @swagger
+ * /restaurant/{id}:
+ *  put:
+ *   tags:
+ *    - Restaurant
+ *   description: update restaurant details
+ *   produces:
+ *    - application/json
+ *   consumes:
+ *    - application/json
+ *   security:
+ *    - bearerAuth: []
+ *   parameters:
+ *    - name: id
+ *      in: path
+ *      required: true
+ *      description: Restaurant Id
+ *    - name: restaurant
+ *      in: body
+ *      type: string
+ *      description: restaurant details
+ *      schema:
+ *        type: object
+ *        required:
+ *          - name
+ *        properties:
+ *          name:
+ *            type: string
+ *          about:
+ *            type: string
+ *          location:
+ *            type: string
+ *   responses:
+ *    200:
+ *     description: Updated successfully
+ *    401:
+ *     description: Bearer token error or unauthorized
+ *    500:
+ *     description: Internal server error/ token could not be verified
+ *    403:
+ *     description: Forbidden
+ *  delete:
+ *   tags:
+ *    - Restaurant
+ *   description: Delete particular restaurant
+ *   produces:
+ *    - application/json
+ *   security:
+ *    - bearerAuth: []
+ *   parameters:
+ *    - name: id
+ *      in: path
+ *      required: true
+ *      description: Restaurant Id
+ *   responses:
+ *    200:
+ *     description: Successfully deleted
+ *    401:
+ *     description: Bearer token error or unauthorized
+ *    500:
+ *     description: Internal server error/ token could not be verified
+ *    403:
+ *     description: Forbidden
+ */
