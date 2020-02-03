@@ -54,7 +54,7 @@ router.route("/order/:id")
             }
         } catch (err) {
             console.log(err);
-            res.status(500).send("Something went wrong");
+            res.status(500).send({status:"Something went wrong"});
         }
     })
     .put(auth.verifyUser, auth.verifyAdmin, (req, res, next) => {

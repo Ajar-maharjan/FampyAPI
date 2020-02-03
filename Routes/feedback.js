@@ -9,7 +9,7 @@ router.route('/feedback')
         Feedback.create(req.body)
             .then(() => {
                 res.statusCode = 201;
-                res.json('Feedback sent successfully');
+                res.json({status:'Feedback sent successfully'});
             })
             .catch(next);
     })
