@@ -54,34 +54,38 @@ router.route("/order/:id")
             }
         } catch (err) {
             console.log(err);
-            res.status(500).send({status:"Something went wrong"});
+            res.status(500).send({
+                status: "Something went wrong"
+            });
         }
     })
     .put(auth.verifyUser, auth.verifyAdmin, (req, res, next) => {
-        Order.findByIdAndUpdate({
+        Order.findOne({
                 _id: req.params.id
-            }, {
-                active: req.body.active
             })
-            .then(() => {
-                Order.findOne({
-                        _id: req.params.id
-                    })
-                    .then((order) => {
-                        res.status(200);
-                        if (order.active == false)
+            .then((order) => {
+                res.status(200);
+                if (order.active == true) {
+                    Order.findByIdAndUpdate({
+                            _id: req.params.id
+                        }, {
+                            active: req.body.active
+                        })
+                        .then(() => {
+                            res.status(200);
                             res.json({
                                 status: 'Delivered successfully'
                             })
-                        else {
-                            res.json({
-                                status: 'Order reactivated'
-                            })
-                        }
+                        }).catch(next);
+                } else {
+                    res.status(409);
+                    res.json({
+                        status: 'Delivery is closed'
                     })
-            })
-            .catch(next)
+                }
+            }).catch(next);
     })
+
 
 
 module.exports = router;
@@ -176,7 +180,9 @@ module.exports = router;
  *            type: boolean
  *   responses:
  *    200:
- *     description: Delivery status
+ *     description: Delivery completed
+ *    409:
+ *     description: Delivery is closed
  *    401:
  *     description: Bearer token error or unauthorized
  *    500:
