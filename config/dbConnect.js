@@ -37,6 +37,8 @@ function connect() {
 }
 
 function close() {
+    mongoose.models = {};
+    mongoose.modelSchemas = {};
     return mongoose.disconnect();
 }
 

@@ -78,7 +78,9 @@ router.route('/mylocation/:id')
             .then((location) => {
                 if (location == null) throw new Error("Unable to delete!");
                 res.status(200);
-                res.json({status:'Location deleted successfully'});
+                res.json({
+                    status: 'Location deleted successfully'
+                });
             }).catch(next);
     })
 
