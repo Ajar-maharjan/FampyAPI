@@ -466,7 +466,7 @@ describe('PUT /mylocation', () => {
     })
 });
 
-describe('GET /mylocation', () => {
+describe('GET /mylocation/:id', () => {
     it('OK, should provide particular location for admin token', (done) => {
         request(app).get('/mylocation/' + locationId)
             .set('Authorization', adminJwtToken)
@@ -479,7 +479,7 @@ describe('GET /mylocation', () => {
     })
 });
 
-describe('GET /mylocation', () => {
+describe('GET /mylocation/:id', () => {
     it('Fail, should not provide particular location for user token', (done) => {
         request(app).get('/mylocation/' + locationId)
             .set('Authorization', userJwtToken)
@@ -492,7 +492,7 @@ describe('GET /mylocation', () => {
     })
 });
 
-describe('PUT /mylocation', () => {
+describe('PUT /mylocation/:id', () => {
     it('OK, update user location', (done) => {
         request(app).put('/mylocation/' + locationId)
             .set('Authorization', userJwtToken)
@@ -511,7 +511,7 @@ describe('PUT /mylocation', () => {
     })
 });
 
-describe('PUT /mylocation', () => {
+describe('PUT /mylocation/:id', () => {
     it('Fail, Invalid user bearer token', (done) => {
         request(app).put('/mylocation/' + locationId)
             .set('Authorization', 'wrong bearer token')
@@ -530,7 +530,7 @@ describe('PUT /mylocation', () => {
     })
 });
 
-describe('POST DELETE /mylocation', () => {
+describe('POST DELETE /mylocation/:id', () => {
     it('OK, create new user location and delete through same user', (done) => {
         request(app).post('/mylocation')
             .set('Authorization', userJwtToken)
@@ -555,7 +555,7 @@ describe('POST DELETE /mylocation', () => {
     })
 });
 
-describe('POST DELETE /mylocation', () => {
+describe('POST DELETE /mylocation/:id', () => {
     it('Fail, create new user location but invalid user token', (done) => {
         request(app).post('/mylocation')
             .set('Authorization', userJwtToken)
@@ -662,7 +662,7 @@ describe('PUT /restaurant', () => {
     })
 });
 
-describe('PUT /restaurant', () => {
+describe('PUT /restaurant/:id', () => {
     it('OK, update restaurant details', (done) => {
         request(app).put('/restaurant/' + restaurantId)
             .set('Authorization', adminJwtToken)
@@ -681,7 +681,7 @@ describe('PUT /restaurant', () => {
     })
 });
 
-describe('PUT /restaurant', () => {
+describe('PUT /restaurant/:id', () => {
     it('Fail, not admin bearer token', (done) => {
         request(app).put('/restaurant/' + restaurantId)
             .set('Authorization', userJwtToken)
@@ -700,7 +700,7 @@ describe('PUT /restaurant', () => {
     })
 });
 
-describe('POST DELETE /restaurant', () => {
+describe('POST DELETE /restaurant/:id', () => {
     it('OK, create new restaurant and delete', (done) => {
         request(app).post('/restaurant')
             .set('Authorization', adminJwtToken)
@@ -725,7 +725,7 @@ describe('POST DELETE /restaurant', () => {
     })
 });
 
-describe('POST DELETE /restaurant', () => {
+describe('POST DELETE /restaurant/:id', () => {
     it('Fail, create new user location but not admin token', (done) => {
         request(app).post('/restaurant')
             .set('Authorization', adminJwtToken)
@@ -747,5 +747,255 @@ describe('POST DELETE /restaurant', () => {
                     .catch((err) => done(err));
             })
             .catch((err) => done(err));
+    })
+});
+
+//food unit testing 
+
+let foodId = '';
+
+describe('POST /food', () => {
+    it('OK, create new food', (done) => {
+        request(app).post('/food')
+            .set('Authorization', adminJwtToken)
+            .send({
+                foodName: "food name",
+                restaurants: restaurantId,
+                foodPrice: 1000,
+                description:"food description",
+                image: "restaurant image"
+            })
+            .then((res) => {
+                expect(res.statusCode).to.equal(201);
+                expect(res.body).to.not.be.empty;
+                foodId = res.body._id
+                done();
+            })
+            .catch((err) => done(err));
+    })
+});
+
+describe('POST /food', () => {
+    it('Fail, empty restaurant and price', (done) => {
+        request(app).post('/food')
+            .set('Authorization', adminJwtToken)
+            .send({
+                foodName: "food name 2",
+                description:"food description",
+                image: "restaurant image"
+            })
+            .then((res) => {
+                const body = res.body;
+                expect(res.statusCode).to.equal(500);
+                expect(body).to.be.empty;
+                done();
+            })
+            .catch((err) => done(err));
+    })
+});
+
+describe('GET /food', () => {
+    it('OK, should provide all foods', (done) => {
+        request(app).get('/food')
+            .then((res) => {
+                expect(res.statusCode).to.equal(200);
+                expect(res.body).to.not.be.empty;
+                done();
+            })
+            .catch((err) => done(err));
+    })
+});
+
+
+describe('DELETE /food', () => {
+    it('OK, Forbidden', (done) => {
+        request(app).delete('/food')
+            .set('Authorization', userJwtToken)
+            .then((res) => {
+                expect(res.statusCode).to.equal(405);
+                expect(res.body).to.contain.property('message', 'Method not allowed');
+                done();
+            })
+            .catch((err) => done(err));
+    })
+});
+
+describe('PUT /food', () => {
+    it('OK, Forbidden', (done) => {
+        request(app).put('/food')
+            .set('Authorization', userJwtToken)
+            .then((res) => {
+                expect(res.statusCode).to.equal(405);
+                expect(res.body).to.contain.property('message', 'Method not allowed');
+                done();
+            })
+            .catch((err) => done(err));
+    })
+});
+
+describe('GET /food/:id', () => {
+    it('OK, should provide particular food details', (done) => {
+        request(app).get('/food/' + foodId)
+            .then((res) => {
+                expect(res.statusCode).to.equal(200);
+                expect(res.body).to.not.be.empty;
+                done();
+            })
+            .catch((err) => done(err))
+    })
+});
+
+describe('GET /food/:id', () => {
+    it('Fail, incorrect food Id', (done) => {
+        let id = 'invalidid'
+        request(app).get('/food/' + id)
+            .then((res) => {
+                expect(res.statusCode).to.equal(500);
+                expect(res.body).to.be.empty;
+                done();
+            })
+            .catch((err) => done(err))
+    })
+});
+
+describe('PUT /food/:id', () => {
+    it('OK, update food by admin', (done) => {
+        request(app).put('/food/' + foodId)
+            .set('Authorization', adminJwtToken)
+            .send({
+                foodName: "updated food name",
+                foodPrice: 5000,
+                description:"updated food description",
+                image: "updated restaurant image"
+            })
+            .then((res) => {
+                expect(res.statusCode).to.equal(200);
+                expect(res.body).to.not.be.empty;
+                done();
+            })
+            .catch((err) => done(err));
+    })
+});
+
+describe('PUT /food/:id', () => {
+    it('Fail, user bearer token instead of admin', (done) => {
+        request(app).put('/food/' + foodId)
+            .set('Authorization', userJwtToken)
+            .send({
+                foodName: "updated food name 2",
+                foodPrice: 5300,
+                description:"updated food description 2",
+                image: "updated restaurant image 2"
+            })
+            .then((res) => {
+                expect(res.statusCode).to.equal(403);
+                expect(res.body).to.be.empty;
+                done();
+            })
+            .catch((err) => done(err));
+    })
+});
+
+describe('POST DELETE /food/:id', () => {
+    it('OK, create new food and delete by admin', (done) => {
+        request(app).post('/food')
+            .set('Authorization', adminJwtToken)
+            .send({
+                foodName: "food name tbd",
+                restaurants: restaurantId,
+                foodPrice: 1030,
+                description:"food description tbd",
+                image: "restaurant image tbd"
+            })
+            .then((res) => {
+                let id = res.body._id
+                request(app).delete('/food/' + id)
+                    .set('Authorization', adminJwtToken)
+                    .then((res) => {
+                        expect(res.statusCode).to.equal(200);
+                        expect(res.body).to.contain.property('status', 'Food deleted successfully');
+                        done();
+                    })
+                    .catch((err) => done(err));
+            })
+            .catch((err) => done(err));
+    })
+});
+
+describe('POST DELETE /food/:id', () => {
+    it('Fail, create new food but user token instead of admin', (done) => {
+        request(app).post('/food')
+            .set('Authorization', adminJwtToken)
+            .send({
+                foodName: "food name tbd 2",
+                restaurants: restaurantId,
+                foodPrice: 1030,
+                description:"food description tbd 2",
+                image: "restaurant image tbd 2"
+            })
+            .then((res) => {
+                let id = res.body._id
+                request(app).delete('/food/' + id)
+                    .set('Authorization', userJwtToken)
+                    .then((res) => {
+                        expect(res.statusCode).to.equal(403);
+                        expect(res.body).to.be.empty;
+                        done();
+                    })
+                    .catch((err) => done(err));
+            })
+            .catch((err) => done(err));
+    })
+});
+
+describe('GET /restaurant/food/:id', () => {
+    it('OK, should provide all food details of particular restaurant', (done) => {
+        request(app).get('/restaurant/food/' + restaurantId)
+            .then((res) => {
+                expect(res.statusCode).to.equal(200);
+                expect(res.body).to.not.be.empty;
+                done();
+            })
+            .catch((err) => done(err))
+    })
+});
+
+describe('GET /restaurant/food/:id', () => {
+    it('Fail, incorrect restaurant Id', (done) => {
+        let id = 'invalidid'
+        request(app).get('/restaurant/food/' + id)
+            .then((res) => {
+                expect(res.statusCode).to.equal(500);
+                expect(res.body).to.be.empty;
+                done();
+            })
+            .catch((err) => done(err))
+    })
+});
+
+let searchText ='food';
+
+describe('GET /searchfood/:search', () => {
+    it('OK, retrieve food detail of search text', (done) => {
+        request(app).get('/searchfood/' + searchText)
+            .then((res) => {
+                expect(res.statusCode).to.equal(200);
+                expect(res.body).to.not.be.empty;
+                done();
+            })
+            .catch((err) => done(err))
+    })
+});
+
+describe('GET /searchfood/:search', () => {
+    it('Fail, not available search text', (done) => {
+        let search = 'asd';
+        request(app).get('/searchfood/' + search)
+            .then((res) => {
+                expect(res.statusCode).to.equal(200);
+                expect(res.body).to.be.empty;
+                done();
+            })
+            .catch((err) => done(err))
     })
 });

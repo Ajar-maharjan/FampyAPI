@@ -25,7 +25,6 @@ router.get('/searchfood/:search', cors(), (req, res, next) => {
             }
         })
         .then((food) => {
-            if (food == null) throw new Error("Food not found!");
             res.status(200);
             res.json(food);
         })
@@ -49,13 +48,13 @@ router.route('/food')
             })
             .catch(next);
     })
-    .put((req, res) => {
+    .put(auth.verifyUser,(req, res) => {
         res.statusCode = 405;
         res.json({
             message: "Method not allowed"
         });
     })
-    .delete((req, res) => {
+    .delete(auth.verifyUser,(req, res) => {
         res.statusCode = 405;
         res.json({
             message: "Method not allowed"
@@ -86,7 +85,7 @@ router.route('/food/:id')
             .then((food) => {
                 if (food == null) throw new Error("Food not found!");
                 res.status(200);
-                res.json({status:'Deleted successfully'});
+                res.json({status:'Food deleted successfully'});
             }).catch(next);
     })
     .get((req, res, next) => {
