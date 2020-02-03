@@ -2,14 +2,11 @@
 process.env.NODE_ENV = 'test';
 
 const path = require("path");
-const chai = require('chai');
 const app = require('../index.js')
 const request = require('supertest');
 const expect = require('chai').expect;
-const chaiHttp = require('chai-http');
 const conn = require('../config/dbConnect');
-chai.use(chaiHttp);
-const body = res.body;
+
 
 //new admin and ordinary user
 
@@ -55,7 +52,7 @@ describe('POST /signup admin', () => {
                 console.log(adminJwtToken);
                 done();
             })
-            .catch((err) => done(err))
+            .catch((err) => done(err));
     })
 });
 
@@ -70,7 +67,7 @@ describe('POST /signup user', () => {
                 console.log(userJwtToken);
                 done();
             })
-            .catch((err) => done(err))
+            .catch((err) => done(err));
     })
 });
 
@@ -87,7 +84,7 @@ describe('POST /signup', () => {
                 expect(res.body).to.be.empty;
                 done();
             })
-            .catch((err) => done(err))
+            .catch((err) => done(err));
     })
 });
 
@@ -103,7 +100,7 @@ describe('POST /login admin', () => {
                 expect(res.body).to.contain.property('token');
                 done();
             })
-            .catch((err) => done(err))
+            .catch((err) => done(err));
     })
 });
 
@@ -119,7 +116,7 @@ describe('POST /login normal user', () => {
                 expect(res.body).to.contain.property('token');
                 done();
             })
-            .catch((err) => done(err))
+            .catch((err) => done(err));
     })
 });
 
@@ -135,7 +132,7 @@ describe('POST /login', () => {
                 expect(res.body).to.be.empty;
                 done();
             })
-            .catch((err) => done(err))
+            .catch((err) => done(err));
     })
 });
 
@@ -152,7 +149,7 @@ describe('GET /me', () => {
                 expect(body).to.contain.property('phoneNumber', '987654321');
                 done();
             })
-            .catch((err) => done(err))
+            .catch((err) => done(err));
     })
 });
 
@@ -165,7 +162,7 @@ describe('GET /me', () => {
                 expect(res.body).to.be.empty;
                 done();
             })
-            .catch((err) => done(err))
+            .catch((err) => done(err));
     })
 });
 
@@ -189,7 +186,7 @@ describe('GET /me', () => {
                 expect(body).to.contain.property('phoneNumber', 'editeduser');
                 done();
             })
-            .catch((err) => done(err))
+            .catch((err) => done(err));
     })
 });
 
@@ -208,7 +205,7 @@ describe('GET /me', () => {
                 expect(res.body).to.be.empty;
                 done();
             })
-            .catch((err) => done(err))
+            .catch((err) => done(err));
     })
 });
 
@@ -236,12 +233,11 @@ describe('POST and PUT /user/change ', () => {
                         expect(body).to.contain.property('name');
                         expect(body).to.contain.property('phoneNumber');
                         expect(body).to.contain.property('status', 'password changed');
+                        done();
                     })
-                    .catch((err) => done(err))
-                done();
+                    .catch((err) => done(err));
             })
-            .catch((err) => done(err))
-
+            .catch((err) => done(err));
     })
 });
 
@@ -258,8 +254,7 @@ describe('POST /user/change ', () => {
                 expect(res.body).to.be.empty;
                 done();
             })
-            .catch((err) => done(err))
-
+            .catch((err) => done(err));
     })
 });
 
@@ -372,6 +367,384 @@ describe('POST /upload', () => {
                 expect(res.statusCode).to.equal(500);
                 expect(res.body).to.be.empty;
                 done();
+            })
+            .catch((err) => done(err));
+    })
+});
+
+// location testing
+
+let locationId = '';
+
+describe('POST /mylocation', () => {
+    it('OK, create new user location', (done) => {
+        request(app).post('/mylocation')
+            .set('Authorization', userJwtToken)
+            .send({
+                name: "location name",
+                latitude: "latitude",
+                longitude: "longitude",
+                additionalInfo: "additional information"
+            })
+            .then((res) => {
+                expect(res.statusCode).to.equal(201);
+                expect(res.body).to.not.be.empty;
+                locationId = res.body._id
+                done();
+            })
+            .catch((err) => done(err));
+    })
+});
+
+describe('POST /mylocation', () => {
+    it('Fail, empty fields of location', (done) => {
+        request(app).post('/mylocation')
+            .set('Authorization', userJwtToken)
+            .send({
+                longitude: "longitude",
+                additionalInfo: "additional information"
+            })
+            .then((res) => {
+                const body = res.body;
+                expect(res.statusCode).to.equal(500);
+                expect(body).to.be.empty;
+                done();
+            })
+            .catch((err) => done(err));
+    })
+});
+
+describe('GET /mylocation', () => {
+    it('OK, should provide particular user locations', (done) => {
+        request(app).get('/mylocation')
+            .set('Authorization', userJwtToken)
+            .then((res) => {
+                expect(res.statusCode).to.equal(200);
+                expect(res.body).to.not.be.empty;
+                done();
+            })
+            .catch((err) => done(err))
+    })
+});
+
+describe('GET /mylocation', () => {
+    it('Fail, incorrect bearer token', (done) => {
+        request(app).get('/mylocation')
+            .set('Authorization', 'wrong bearer token')
+            .then((res) => {
+                expect(res.statusCode).to.equal(500);
+                expect(res.body).to.be.empty;
+                done();
+            })
+            .catch((err) => done(err))
+    })
+});
+
+describe('DELETE /mylocation', () => {
+    it('OK, Forbidden', (done) => {
+        request(app).delete('/mylocation')
+            .set('Authorization', userJwtToken)
+            .then((res) => {
+                expect(res.statusCode).to.equal(405);
+                expect(res.body).to.contain.property('message', 'Method not allowed');
+                done();
+            })
+            .catch((err) => done(err))
+    })
+});
+
+describe('PUT /mylocation', () => {
+    it('OK, Forbidden', (done) => {
+        request(app).put('/mylocation')
+            .set('Authorization', userJwtToken)
+            .then((res) => {
+                expect(res.statusCode).to.equal(405);
+                expect(res.body).to.contain.property('message', 'Method not allowed');
+                done();
+            })
+            .catch((err) => done(err))
+    })
+});
+
+describe('GET /mylocation', () => {
+    it('OK, should provide particular location for admin token', (done) => {
+        request(app).get('/mylocation/' + locationId)
+            .set('Authorization', adminJwtToken)
+            .then((res) => {
+                expect(res.statusCode).to.equal(200);
+                expect(res.body).to.not.be.empty;
+                done();
+            })
+            .catch((err) => done(err))
+    })
+});
+
+describe('GET /mylocation', () => {
+    it('Fail, should not provide particular location for user token', (done) => {
+        request(app).get('/mylocation/' + locationId)
+            .set('Authorization', userJwtToken)
+            .then((res) => {
+                expect(res.statusCode).to.equal(403);
+                expect(res.body).to.be.empty;
+                done();
+            })
+            .catch((err) => done(err))
+    })
+});
+
+describe('PUT /mylocation', () => {
+    it('OK, update user location', (done) => {
+        request(app).put('/mylocation/' + locationId)
+            .set('Authorization', userJwtToken)
+            .send({
+                name: "new location name",
+                latitude: "new latitude",
+                longitude: "new longitude",
+                additionalInfo: "new additional information"
+            })
+            .then((res) => {
+                expect(res.statusCode).to.equal(200);
+                expect(res.body).to.not.be.empty;
+                done();
+            })
+            .catch((err) => done(err));
+    })
+});
+
+describe('PUT /mylocation', () => {
+    it('Fail, Invalid user bearer token', (done) => {
+        request(app).put('/mylocation/' + locationId)
+            .set('Authorization', 'wrong bearer token')
+            .send({
+                name: "new location name",
+                latitude: "new latitude",
+                longitude: "new longitude",
+                additionalInfo: "new additional information"
+            })
+            .then((res) => {
+                expect(res.statusCode).to.equal(500);
+                expect(res.body).to.be.empty;
+                done();
+            })
+            .catch((err) => done(err));
+    })
+});
+
+describe('POST DELETE /mylocation', () => {
+    it('OK, create new user location and delete through same user', (done) => {
+        request(app).post('/mylocation')
+            .set('Authorization', userJwtToken)
+            .send({
+                name: "to be deleted location",
+                latitude: "to be deleted latitude",
+                longitude: "to be deleted longitude",
+                additionalInfo: "to be deleted additional information"
+            })
+            .then((res) => {
+                let id = res.body._id
+                request(app).delete('/mylocation/' + id)
+                    .set('Authorization', userJwtToken)
+                    .then((res) => {
+                        expect(res.statusCode).to.equal(200);
+                        expect(res.body).to.contain.property('status', 'Location deleted successfully');
+                        done();
+                    })
+                    .catch((err) => done(err));
+            })
+            .catch((err) => done(err));
+    })
+});
+
+describe('POST DELETE /mylocation', () => {
+    it('Fail, create new user location but invalid user token', (done) => {
+        request(app).post('/mylocation')
+            .set('Authorization', userJwtToken)
+            .send({
+                name: "to be deleted",
+                latitude: "to be deleted",
+                longitude: "to be deleted",
+                additionalInfo: "to be deleted"
+            })
+            .then((res) => {
+                let id = res.body._id
+                request(app).delete('/mylocation/' + id)
+                    .set('Authorization', 'invalid bearer token')
+                    .then((res) => {
+                        expect(res.statusCode).to.equal(500);
+                        expect(res.body).to.be.empty;
+                        done();
+                    })
+                    .catch((err) => done(err));
+            })
+            .catch((err) => done(err));
+    })
+});
+
+//restaurant testing
+
+let restaurantId = '';
+
+describe('POST /restaurant', () => {
+    it('OK, create new restaurant', (done) => {
+        request(app).post('/restaurant')
+            .set('Authorization', adminJwtToken)
+            .send({
+                name: "restaurant name",
+                about: "about restaurant",
+                location: "restaurant location",
+                image: "restaurant image"
+            })
+            .then((res) => {
+                expect(res.statusCode).to.equal(201);
+                expect(res.body).to.not.be.empty;
+                restaurantId = res.body._id
+                done();
+            })
+            .catch((err) => done(err));
+    })
+});
+
+describe('POST /restaurant', () => {
+    it('Fail, empty name of restaurant', (done) => {
+        request(app).post('/restaurant')
+            .set('Authorization', adminJwtToken)
+            .send({
+                about: "about restaurant",
+                location: "restaurant location",
+                image: "restaurant image"
+            })
+            .then((res) => {
+                const body = res.body;
+                expect(res.statusCode).to.equal(500);
+                expect(body).to.be.empty;
+                done();
+            })
+            .catch((err) => done(err));
+    })
+});
+
+describe('GET /restaurant', () => {
+    it('OK, should provide all restaurants', (done) => {
+        request(app).get('/restaurant')
+            .then((res) => {
+                expect(res.statusCode).to.equal(200);
+                expect(res.body).to.not.be.empty;
+                done();
+            })
+            .catch((err) => done(err));
+    })
+});
+
+
+describe('DELETE /restaurant', () => {
+    it('OK, Forbidden', (done) => {
+        request(app).delete('/restaurant')
+            .set('Authorization', userJwtToken)
+            .then((res) => {
+                expect(res.statusCode).to.equal(405);
+                expect(res.body).to.contain.property('message', 'Method not allowed');
+                done();
+            })
+            .catch((err) => done(err));
+    })
+});
+
+describe('PUT /restaurant', () => {
+    it('OK, Forbidden', (done) => {
+        request(app).put('/restaurant')
+            .set('Authorization', userJwtToken)
+            .then((res) => {
+                expect(res.statusCode).to.equal(405);
+                expect(res.body).to.contain.property('message', 'Method not allowed');
+                done();
+            })
+            .catch((err) => done(err));
+    })
+});
+
+describe('PUT /restaurant', () => {
+    it('OK, update restaurant details', (done) => {
+        request(app).put('/restaurant/' + restaurantId)
+            .set('Authorization', adminJwtToken)
+            .send({
+                name: "updated restaurant name",
+                about: "updated about restaurant",
+                location: "updated restaurant location",
+                image: "updated restaurant image"
+            })
+            .then((res) => {
+                expect(res.statusCode).to.equal(200);
+                expect(res.body).to.not.be.empty;
+                done();
+            })
+            .catch((err) => done(err));
+    })
+});
+
+describe('PUT /restaurant', () => {
+    it('Fail, not admin bearer token', (done) => {
+        request(app).put('/restaurant/' + restaurantId)
+            .set('Authorization', userJwtToken)
+            .send({
+                name: "updated restaurant name",
+                about: "updated about restaurant",
+                location: "updated restaurant location",
+                image: "updated restaurant image"
+            })
+            .then((res) => {
+                expect(res.statusCode).to.equal(403);
+                expect(res.body).to.be.empty;
+                done();
+            })
+            .catch((err) => done(err));
+    })
+});
+
+describe('POST DELETE /restaurant', () => {
+    it('OK, create new restaurant and delete', (done) => {
+        request(app).post('/restaurant')
+            .set('Authorization', adminJwtToken)
+            .send({
+                name: "new restaurant name",
+                about: "new about restaurant",
+                location: "new restaurant location",
+                image: "new restaurant image"
+            })
+            .then((res) => {
+                let id = res.body._id
+                request(app).delete('/restaurant/' + id)
+                    .set('Authorization', adminJwtToken)
+                    .then((res) => {
+                        expect(res.statusCode).to.equal(200);
+                        expect(res.body).to.contain.property('status', 'Restaurant deleted successfully');
+                        done();
+                    })
+                    .catch((err) => done(err))
+            })
+            .catch((err) => done(err));
+    })
+});
+
+describe('POST DELETE /restaurant', () => {
+    it('Fail, create new user location but not admin token', (done) => {
+        request(app).post('/restaurant')
+            .set('Authorization', adminJwtToken)
+            .send({
+                name: "new restaurant name",
+                about: "new about restaurant",
+                location: "new restaurant location",
+                image: "new restaurant image"
+            })
+            .then((res) => {
+                let id = res.body._id
+                request(app).delete('/restaurant/' + id)
+                    .set('Authorization', userJwtToken)
+                    .then((res) => {
+                        expect(res.statusCode).to.equal(403);
+                        expect(res.body).to.be.empty;
+                        done();
+                    })
+                    .catch((err) => done(err));
             })
             .catch((err) => done(err));
     })

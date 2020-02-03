@@ -21,13 +21,13 @@ router.route('/restaurant')
             })
             .catch(next);
     })
-    .put((req, res) => {
+    .put(auth.verifyUser, (req, res) => {
         res.statusCode = 405;
         res.json({
             message: "Method not allowed"
         });
     })
-    .delete((req, res) => {
+    .delete(auth.verifyUser, (req, res) => {
         res.statusCode = 405;
         res.json({
             message: "Method not allowed"
@@ -58,7 +58,9 @@ router.route('/restaurant/:id')
             })
             .then((restaurant) => {
                 if (restaurant == null) throw new Error("Restaurant not found!");
-                res.json({status:'Restaurant deleted succesfully'});
+                res.json({
+                    status: 'Restaurant deleted successfully'
+                });
             }).catch(next);
     })
     .get()
