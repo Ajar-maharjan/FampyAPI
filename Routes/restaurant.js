@@ -58,7 +58,7 @@ router.route('/restaurant/:id')
             })
             .then((restaurant) => {
                 if (restaurant == null) throw new Error("Restaurant not found!");
-                res.json('Restaurant deleted succesfully');
+                res.json({status:'Restaurant deleted succesfully'});
             }).catch(next);
     })
     .get()

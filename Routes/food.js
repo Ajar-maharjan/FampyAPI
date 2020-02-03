@@ -86,7 +86,7 @@ router.route('/food/:id')
             .then((food) => {
                 if (food == null) throw new Error("Food not found!");
                 res.status(200);
-                res.json('Deleted successfully');
+                res.json({status:'Deleted successfully'});
             }).catch(next);
     })
     .get((req, res, next) => {

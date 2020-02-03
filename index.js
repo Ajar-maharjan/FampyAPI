@@ -53,3 +53,5 @@ connection.connect()
             console.log(`App is running at localhost:${process.env.PORT}`);
         });
     })
+
+module.exports = app;
