@@ -21,6 +21,7 @@ router.post('/signup', (req, res, next) => {
                 let token = jwt.sign({
                     _id: user._id
                 }, process.env.SECRET);
+                res.status(201);
                 res.json({
                     status: "Signup success!",
                     token: token
@@ -49,7 +50,7 @@ router.post('/login', (req, res, next) => {
                         let token = jwt.sign({
                             _id: user._id
                         }, process.env.SECRET);
-                        res.status(201);
+                        res.status(200);
                         res.json({
                             status: 'Login success!',
                             token: token
@@ -62,12 +63,14 @@ router.post('/login', (req, res, next) => {
 
 router.route('/me')
     .get(auth.verifyUser, (req, res) => {
+        res.status(200);
         res.json({
             _id: req.user._id,
             email: req.user.email,
             image: req.user.image,
             name: req.user.name,
-            phoneNumber: req.user.phoneNumber
+            phoneNumber: req.user.phoneNumber,
+            password: req.user.password
         })
     })
     .put(auth.verifyUser, (req, res, next) => {
@@ -101,11 +104,11 @@ router.route('/me')
 router.route('/user/change')
     .post(auth.verifyUser, (req, res, next) => {
         User.findOne({
-                email: req.body.email
+                _id: req.user._id
             })
             .then((user) => {
                 if (user == null) {
-                    let err = new Error("Incorrect username");
+                    let err = new Error("Invalid user");
                     err.status = 401;
                     return next(err);
                 } else {
@@ -148,7 +151,8 @@ router.route('/user/change')
                                 email: user.email,
                                 image: user.image,
                                 name: user.name,
-                                phoneNumber: user.phoneNumber
+                                phoneNumber: user.phoneNumber,
+                                status: 'password changed'
                             })
                         })
                 })
@@ -318,7 +322,7 @@ module.exports = router;
  *    - name: user
  *      in: body
  *      type: string
- *      description: user email and password
+ *      description: user current password
  *      schema:
  *        type: object
  *        required:
@@ -327,15 +331,13 @@ module.exports = router;
  *        uniqueItems:
  *          - email
  *        properties:
- *          email:
- *            type: string
  *          password:
  *            type: string
  *   responses:
  *    200:
  *     description: Correct password
  *    401:
- *     description: incorrect username or incorrect password or token error
+ *     description: invalid user or incorrect password or token error
  *    500:
  *     description: Token could not be verified
  *  put:
