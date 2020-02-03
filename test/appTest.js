@@ -762,7 +762,7 @@ describe('POST /food', () => {
                 foodName: "food name",
                 restaurants: restaurantId,
                 foodPrice: 1000,
-                description:"food description",
+                description: "food description",
                 image: "restaurant image"
             })
             .then((res) => {
@@ -781,13 +781,12 @@ describe('POST /food', () => {
             .set('Authorization', adminJwtToken)
             .send({
                 foodName: "food name 2",
-                description:"food description",
+                description: "food description",
                 image: "restaurant image"
             })
             .then((res) => {
-                const body = res.body;
                 expect(res.statusCode).to.equal(500);
-                expect(body).to.be.empty;
+                expect(res.body).to.be.empty;
                 done();
             })
             .catch((err) => done(err));
@@ -865,7 +864,7 @@ describe('PUT /food/:id', () => {
             .send({
                 foodName: "updated food name",
                 foodPrice: 5000,
-                description:"updated food description",
+                description: "updated food description",
                 image: "updated restaurant image"
             })
             .then((res) => {
@@ -884,7 +883,7 @@ describe('PUT /food/:id', () => {
             .send({
                 foodName: "updated food name 2",
                 foodPrice: 5300,
-                description:"updated food description 2",
+                description: "updated food description 2",
                 image: "updated restaurant image 2"
             })
             .then((res) => {
@@ -904,7 +903,7 @@ describe('POST DELETE /food/:id', () => {
                 foodName: "food name tbd",
                 restaurants: restaurantId,
                 foodPrice: 1030,
-                description:"food description tbd",
+                description: "food description tbd",
                 image: "restaurant image tbd"
             })
             .then((res) => {
@@ -930,7 +929,7 @@ describe('POST DELETE /food/:id', () => {
                 foodName: "food name tbd 2",
                 restaurants: restaurantId,
                 foodPrice: 1030,
-                description:"food description tbd 2",
+                description: "food description tbd 2",
                 image: "restaurant image tbd 2"
             })
             .then((res) => {
@@ -973,7 +972,7 @@ describe('GET /restaurant/food/:id', () => {
     })
 });
 
-let searchText ='food';
+let searchText = 'food';
 
 describe('GET /searchfood/:search', () => {
     it('OK, retrieve food detail of search text', (done) => {
@@ -993,6 +992,151 @@ describe('GET /searchfood/:search', () => {
         request(app).get('/searchfood/' + search)
             .then((res) => {
                 expect(res.statusCode).to.equal(200);
+                expect(res.body).to.be.empty;
+                done();
+            })
+            .catch((err) => done(err))
+    })
+});
+
+// order unit testing
+let orderId = '';
+
+describe('POST /order/:id', () => {
+    it('OK, new basket food order', (done) => {
+        request(app).post('/order/' + locationId)
+            .set('Authorization', userJwtToken)
+            .send({
+                foodId: foodId,
+                quantity: 3,
+                price: 5000,
+            })
+            .then((res) => {
+                expect(res.statusCode).to.equal(201);
+                expect(res.body).to.not.be.empty;
+                orderId = res.body._id;
+                done();
+            })
+            .catch((err) => done(err));
+    })
+});
+
+describe('POST /order/:id', () => {
+    it('Fail, invalid user token', (done) => {
+        request(app).post('/order/' + locationId)
+            .set('Authorization', 'invalid bearer token')
+            .send({
+                foodId: foodId,
+                quantity: 3,
+                price: 5000,
+            })
+            .then((res) => {
+                expect(res.statusCode).to.equal(500);
+                expect(res.body).to.be.empty;
+                done();
+            })
+            .catch((err) => done(err));
+    })
+});
+
+describe('POST /order/:id', () => {
+    it('Fail, invalid locationId and foodId', (done) => {
+        request(app).post('/order/' + 'invalidlocation')
+            .set('Authorization', userJwtToken)
+            .send({
+                foodId: 'invalidfood',
+                quantity: 3,
+                price: 5000,
+            })
+            .then((res) => {
+                expect(res.statusCode).to.equal(500);
+                expect(res.body).to.contain.property('status', 'Something went wrong');
+                done();
+            })
+            .catch((err) => done(err));
+    })
+});
+
+describe('PUT /order/:id', () => {
+    it('Ok, updated basket after completing delivery', (done) => {
+        request(app).put('/order/' + orderId)
+            .set('Authorization', adminJwtToken)
+            .send({
+                active: false
+            })
+            .then((res) => {
+                expect(res.statusCode).to.equal(200);
+                expect(res.body).to.contain.property('status', 'Delivered successfully');
+                done();
+            })
+            .catch((err) => done(err));
+    })
+});
+
+describe('PUT /order/:id', () => {
+    it('Ok, updating completed delivery', (done) => {
+        request(app).put('/order/' + orderId)
+            .set('Authorization', adminJwtToken)
+            .send({
+                active: true
+            })
+            .then((res) => {
+                expect(res.statusCode).to.equal(409);
+                expect(res.body).to.contain.property('status', 'Delivery is closed');
+                done();
+            })
+            .catch((err) => done(err));
+    })
+});
+
+describe('PUT /order/:id', () => {
+    it('Ok, invalid admin token', (done) => {
+        request(app).put('/order/' + orderId)
+            .set('Authorization', userJwtToken)
+            .send({
+                active: true
+            })
+            .then((res) => {
+                expect(res.statusCode).to.equal(403);
+                expect(res.body).to.be.empty;
+                done();
+            })
+            .catch((err) => done(err));
+    })
+});
+
+describe('GET /order', () => {
+    it('OK, should provide all existing basket order', (done) => {
+        request(app).get('/order')
+            .set('Authorization', adminJwtToken)
+            .then((res) => {
+                expect(res.statusCode).to.equal(200);
+                expect(res.body).to.not.be.empty;
+                done();
+            })
+            .catch((err) => done(err))
+    })
+});
+
+describe('GET /order', () => {
+    it('OK, invalid admin token for order', (done) => {
+        request(app).get('/order')
+            .set('Authorization', userJwtToken)
+            .then((res) => {
+                expect(res.statusCode).to.equal(403);
+                expect(res.body).to.be.empty;
+                done();
+            })
+            .catch((err) => done(err))
+    })
+});
+
+describe('GET /order', () => {
+    it('OK, invalid bearer token for order', (done) => {
+        request(app).get('/order')
+            .set('Authorization', 'bearer userJwtToken')
+            .then((res) => {
+                expect(res.statusCode).to.equal(500);
                 expect(res.body).to.be.empty;
                 done();
             })
