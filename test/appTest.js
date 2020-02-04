@@ -29,7 +29,8 @@ let normalUser = {
 };
 let userJwtToken = '';
 
-before((done) => {
+before(function(done) {
+    this.timeout(15000)
     conn.connect()
         .then(() => done())
         .catch((err) => done(err));
