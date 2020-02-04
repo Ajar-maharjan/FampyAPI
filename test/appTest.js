@@ -1091,7 +1091,7 @@ describe('PUT /order/:id', () => {
 });
 
 describe('PUT /order/:id', () => {
-    it('Ok, invalid admin token', (done) => {
+    it('Fail, invalid admin token', (done) => {
         request(app).put('/order/' + orderId)
             .set('Authorization', userJwtToken)
             .send({
@@ -1120,7 +1120,7 @@ describe('GET /order', () => {
 });
 
 describe('GET /order', () => {
-    it('OK, invalid admin token for order', (done) => {
+    it('Fail, invalid admin token for order', (done) => {
         request(app).get('/order')
             .set('Authorization', userJwtToken)
             .then((res) => {
@@ -1133,7 +1133,7 @@ describe('GET /order', () => {
 });
 
 describe('GET /order', () => {
-    it('OK, invalid bearer token for order', (done) => {
+    it('Fail, invalid bearer token for order', (done) => {
         request(app).get('/order')
             .set('Authorization', 'bearer userJwtToken')
             .then((res) => {
