@@ -1144,3 +1144,30 @@ describe('GET /order', () => {
             .catch((err) => done(err))
     })
 });
+
+
+describe('GET /order/user', () => {
+    it('OK, should provide user existing basket order', (done) => {
+        request(app).get('/order/user')
+            .set('Authorization', userJwtToken)
+            .then((res) => {
+                expect(res.statusCode).to.equal(200);
+                expect(res.body).to.not.be.empty;
+                done();
+            })
+            .catch((err) => done(err))
+    })
+});
+
+describe('GET /order/user', () => {
+    it('Fail, invalid user token', (done) => {
+        request(app).get('/order/user')
+            .set('Authorization', 'invalid bearer adminJwtToken')
+            .then((res) => {
+                expect(res.statusCode).to.equal(500);
+                expect(res.body).to.be.empty;
+                done();
+            })
+            .catch((err) => done(err))
+    })
+});

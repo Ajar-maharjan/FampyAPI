@@ -85,6 +85,15 @@ router.route("/order/:id")
                 }
             }).catch(next);
     })
+router.get("/order/user", auth.verifyUser, (req, res, next) => {
+    Order.findOne({
+            users: req.user._id
+        })
+        .then((order) => {
+            res.json(order);
+        })
+        .catch(next);
+})
 
 
 
@@ -189,4 +198,20 @@ module.exports = router;
  *     description: Internal server error/ token could not be verified
  *    403:
  *     description: Forbidden
+ * /order/user:
+ *  get:
+ *   tags:
+ *    - Food order
+ *   description: Retrieve basket of particular
+ *   produces:
+ *    - application/json
+ *   security:
+ *    - bearerAuth: []
+ *   responses:
+ *    200:
+ *     description: Retrieved successfully
+ *    401:
+ *     description: Bearer token error or unauthorized
+ *    500:
+ *     description: Internal server error/ token could not be verified
  */
