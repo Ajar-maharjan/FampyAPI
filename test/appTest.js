@@ -753,7 +753,7 @@ describe('POST DELETE /restaurant/:id', () => {
 
 describe('GET /restaurant/:id', () => {
     it('OK, should provide particular restaurant details', (done) => {
-        request(app).get('/restaurant/' + foodId)
+        request(app).get('/restaurant/' + restaurantId)
             .then((res) => {
                 expect(res.statusCode).to.equal(200);
                 expect(res.body).to.not.be.empty;
