@@ -751,6 +751,31 @@ describe('POST DELETE /restaurant/:id', () => {
     })
 });
 
+describe('GET /restaurant/:id', () => {
+    it('OK, should provide particular restaurant details', (done) => {
+        request(app).get('/restaurant/' + foodId)
+            .then((res) => {
+                expect(res.statusCode).to.equal(200);
+                expect(res.body).to.not.be.empty;
+                done();
+            })
+            .catch((err) => done(err))
+    })
+});
+
+describe('GET /restaurant/:id', () => {
+    it('Fail, incorrect restaurant Id', (done) => {
+        let id = 'invalidid'
+        request(app).get('/restaurant/' + id)
+            .then((res) => {
+                expect(res.statusCode).to.equal(500);
+                expect(res.body).to.be.empty;
+                done();
+            })
+            .catch((err) => done(err))
+    })
+});
+
 //food unit testing 
 
 let foodId = '';

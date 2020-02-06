@@ -63,7 +63,17 @@ router.route('/restaurant/:id')
                 });
             }).catch(next);
     })
-    .get()
+    .get((req, res, next) => {
+        Restarant.findOne({
+                _id: req.params.id
+            })
+            .then((restarant) => {
+                if (restarant == null) throw new Error("Restaurant not found!");
+                res.status(200);
+                res.json(restarant);
+            })
+            .catch(next)
+    })
     .post();
 
 module.exports = router;
@@ -201,4 +211,20 @@ module.exports = router;
  *     description: Internal server error/ token could not be verified
  *    403:
  *     description: Forbidden
+ *  get:
+ *   tags:
+ *    - Restaurant
+ *   description: Retrieve particular restaurant details
+ *   produces:
+ *    - application/json
+ *   parameters:
+ *    - name: id
+ *      in: path
+ *      required: true
+ *      description: Restaurant Id
+ *   responses:
+ *    200:
+ *     description: Successful
+ *    500:
+ *     description: Internal server error
  */
