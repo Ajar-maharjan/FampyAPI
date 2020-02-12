@@ -145,13 +145,8 @@ router.route('/user/change')
                     User.findOne({
                             _id: req.user._id
                         })
-                        .then((user) => {
+                        .then(() => {
                             res.json({
-                                _id: user._id,
-                                email: user.email,
-                                image: user.image,
-                                name: user.name,
-                                phoneNumber: user.phoneNumber,
                                 status: 'password changed'
                             })
                         })
