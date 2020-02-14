@@ -39,9 +39,11 @@ router.route("/order/:id")
                     });
                 }
                 order = await order.save();
-                return res.status(201).send(order);
+                return res.status(201).send({
+                    status: 'Created successfully'
+                });
             } else {
-                const newOrder = await Order.create({
+                await Order.create({
                     users: userId,
                     foods: [{
                         foodId,
@@ -50,7 +52,9 @@ router.route("/order/:id")
                     }],
                     locations: locationId
                 });
-                return res.status(201).send(newOrder);
+                return res.status(201).send({
+                    status: 'Created successfully'
+                });
             }
         } catch (err) {
             console.log(err);
@@ -90,7 +94,15 @@ router.get("/order/user", auth.verifyUser, (req, res, next) => {
             users: req.user._id
         })
         .then((order) => {
-            res.json(order);
+            if (order.active === false) {
+                res.json({
+                    status: "Delivered"
+                });
+            } else {
+                res.json({
+                    status: "Active"
+                });
+            }
         })
         .catch(next);
 })
