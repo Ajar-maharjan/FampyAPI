@@ -1,4 +1,4 @@
-# Fampy – Food Delivery API (University Project)
+# Fampy – Food Delivery API (College Project)
 
 This project is a backend API for a food delivery system built during my undergraduate studies. It was my first full backend project where I worked on authentication, order management, and integrating with a mobile application.
 
