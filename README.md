@@ -1,5 +1,64 @@
-# FampyAPI
-1) to install all used packages run 'npm install' in terminal
-2) to run API server run 'npm run dev'
-3) to run eslint 'npm run lint'
-4) to run mocha test 'npm run test'
+# Fampy – Food Delivery API (University Project)
+
+This project is a backend API for a food delivery system built during my undergraduate studies. It was my first full backend project where I worked on authentication, order management, and integrating with a mobile application.
+
+The API allows users to browse restaurants, select food items, and place orders using location data.
+
+---
+
+## Features
+
+- User registration and login  
+- JWT-based authentication  
+- Password hashing using bcrypt  
+- Browse restaurants and food items  
+- Place food orders  
+- Location-based ordering (Google Maps integration)  
+- Update user profile and password  
+- API documentation using Swagger  
+- Unit testing using Mocha  
+
+---
+
+## Tech Stack
+
+- Node.js  
+- Express.js  
+- MongoDB (Mongoose)  
+- JWT (Authentication)  
+- bcrypt (Password hashing)  
+- Mocha (Testing)  
+- Swagger (API documentation)  
+
+---
+
+## API Structure
+
+The API is structured around different modules:
+
+- `/user` – user authentication and profile management  
+- `/food` – food items  
+- `/restaurant` – restaurant data  
+- `/order` – order handling  
+- `/location` – location-based features  
+- `/feedback` – user feedback  
+- `/upload` – file/image uploads  
+
+---
+
+## Authentication
+
+Authentication is handled using JSON Web Tokens (JWT):
+
+- Users receive a token on login/signup  
+- Protected routes require a valid token  
+- Passwords are securely hashed using bcrypt  
+
+---
+
+## Running the Project
+
+Install dependencies:
+
+```bash
+npm install
