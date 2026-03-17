@@ -60,5 +60,33 @@ Authentication is handled using JSON Web Tokens (JWT):
 
 Install dependencies:
 
-```bash
 npm install
+
+Run development server:
+
+npm run dev
+
+Run tests:
+
+npm run test
+
+Run lint:
+
+npm run lint
+
+---
+
+## Example Request
+
+POST /signup
+
+{
+  "email": "test@test.com",
+  "password": "123456"
+}
+
+---
+
+## Notes
+
+This was one of my earlier projects, but it helped me build a strong foundation in backend development, REST APIs, and working with databases. More recently, I’ve been focusing on modern .NET development and building more advanced systems such as real-time applications.
